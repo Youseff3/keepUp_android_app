@@ -8,12 +8,18 @@
     <string name="password_login_form">Password</string>
     <string name="username_login_form_hint">login name</string>
     <string name="login_button_text">Sign In</string>
-
-    <string name="psswrd_error_message">Please enter your password!</string>
-    <string name="email_error_message">Please enter a valid email address!</string>
     <string name="go_to_register">Create a new account</string>
 
-    <!--Register form strings-->
+    <!--Login and Registration form error messages-->
+    <string name="psswrd_error_message">Please enter your password!</string>
+    <string name="email_error_message">Please enter a valid email address!</string>
+    <string name="regEx_psswrd_error_message">The password must be at least 8 characters and must include one digit, one lowercase character, one uppercase character, one special character, and one special character(!@#$%&amp;*()-+=^). No white spaces are allowed.</string>
+    <string name="reg_psswrd_error_message">Please enter and confirm your password!</string>
+    <string name="confirm_password_error_message">Please enter the same password in the Confirm Password field!</string>
+    <string name="fName_error_message">Please enter your first name!</string>
+    <string name="lName_error_message">Please enter your last name!</string>
+
+    <!--Register form strings and arrays-->
     <string name="register_button_text">Register</string>
     <string name="firstName_register_form">First Name</string>
     <string name="firstName_register_form_hint">First Name</string>
@@ -23,31 +29,28 @@
     <string name="email_register_form_hint">email@domain.com</string>
     <string name="password_confirmation_register_form">Confirm Password</string>
 
-    <string name="confirm_password_error_message">Please enter the same password in the Confirm Password field!</string>
-
     <string name="select_term">Select the term you are interested in: </string>
     <string name="select_year">Select the year that you are in: </string>
     <string name="select_course">Select the courses you are interested in: </string>
+    <string name="select_level">Select the level of courses that you are interested in:</string>
     <string-array name="terms_list">
-        <item>None</item>
         <item>Fall 2020</item>
         <item>Winter 2021</item>
         <item>Spring 2021</item>
     </string-array>
-
     <string-array name="years_list">
-        <item>None</item>
         <item>First Year</item>
         <item>Second Year</item>
         <item>Third Year</item>
         <item>Fourth Year</item>
     </string-array>
-
-    <string-array name="courses_list">
-        <item>None</item>
-        <item>CP470</item>
-        <item>CP468</item>
+    <string-array name="levels_list">
+        <item>100 Level</item>
+        <item>200 Level</item>
+        <item>300 Level</item>
+        <item>400 Level</item>
     </string-array>
-
     <string name="proceed_button">Create Account</string>
+    <string name="course_selection_button">Course Selection</string>
+
 </resources>
