@@ -54,7 +54,7 @@ public class RegisterActivity2 extends AppCompatActivity {
     List<String> levelList;
     String termPreference;
     String yearPreference;
-    ArrayList<Integer> levelPreference;
+    ArrayList<String> levelPreference;
     TextView yearTV;
     TextView levelTV;
     TextView termTV;
@@ -70,7 +70,7 @@ public class RegisterActivity2 extends AppCompatActivity {
         setContentView(R.layout.activity_register2);
         setTitle("Registration");
 
-        levelPreference=new ArrayList<Integer>();
+        levelPreference=new ArrayList<String>();
         yearTV=findViewById(R.id.yearTextView);
         levelTV=findViewById(R.id.levelTextView);
         termTV=findViewById(R.id.termTextView);
@@ -100,10 +100,10 @@ public class RegisterActivity2 extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                 if(checked){
-                levelPreference.add(1);
+                levelPreference.add("1");
                 }else{
-                    if(levelPreference.contains(1)){
-                        levelPreference.remove(Integer.valueOf(1));
+                    if(levelPreference.contains("1")){
+                        levelPreference.remove(Integer.valueOf("1"));
                     }
                 }
             }
@@ -113,10 +113,10 @@ public class RegisterActivity2 extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                 if(checked){
-                    levelPreference.add(2);
+                    levelPreference.add("2");
                 }else{
-                    if(levelPreference.contains(2)){
-                        levelPreference.remove(Integer.valueOf(2));
+                    if(levelPreference.contains("2")){
+                        levelPreference.remove(Integer.valueOf("2"));
                     }
                 }
             }
@@ -126,10 +126,10 @@ public class RegisterActivity2 extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                 if(checked){
-                    levelPreference.add(3);
+                    levelPreference.add("3");
                 }else{
-                    if(levelPreference.contains(3)){
-                        levelPreference.remove(Integer.valueOf(3));
+                    if(levelPreference.contains("3")){
+                        levelPreference.remove(Integer.valueOf("3"));
                     }
                 }
             }
@@ -139,10 +139,10 @@ public class RegisterActivity2 extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                 if(checked){
-                    levelPreference.add(4);
+                    levelPreference.add("4");
                 }else{
-                    if(levelPreference.contains(4)){
-                        levelPreference.remove(Integer.valueOf(4));
+                    if(levelPreference.contains("4")){
+                        levelPreference.remove(Integer.valueOf("4"));
                     }
                 }
             }
@@ -182,7 +182,7 @@ public class RegisterActivity2 extends AppCompatActivity {
                     public void onItemSelected(AdapterView <?> adapterView,
                                                View view, int i, long l) {
 //                        new GetAllContent().execute();
-                        termPreference=termList.get(i);
+                        termPreference=Integer.toString(i+1);
                         levelTV.setVisibility(View.VISIBLE);
                         for (int j=0;j<levelList.size();j++){
                             level_switch_buttons[j]=(Switch)findViewById(idArray2[j]);
@@ -271,6 +271,9 @@ public class RegisterActivity2 extends AppCompatActivity {
 
     public void goToCourseSelection(View view){
         Intent intent=new Intent(RegisterActivity2.this,CourseSelectionActivity.class);
+        intent.putExtra("year",yearPreference);
+        intent.putExtra("term",termPreference);
+        intent.putExtra("level",levelPreference);
         startActivity(intent);
     }
 }

@@ -3,42 +3,48 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp"
     tools:context=".MainActivity">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Welcome Username"
-        />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/addClassesBtn"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Add Classes"
-    />
+        <Button
+            android:id="@+id/class_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Classes" />
 
-    <Button
-        android:id="@+id/viewClassesBtn"
+        <Button
+            android:id="@+id/groups_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Groups" />
+
+        <Button
+            android:id="@+id/schedule_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Appointments" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="View Classes"
-        />
-    <Button
-        android:id="@+id/createGroupBtn"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Create Group"
-        />
-    <Button
-        android:id="@+id/viewGroupBtn"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="View Groups"
-        />
+        android:orientation="vertical">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentContainerView"
+            android:name="com.example.android.ClassFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
 
 </LinearLayout>
