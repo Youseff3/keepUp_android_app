@@ -11,9 +11,40 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="20dp"
-        android:text="Class Fragment"
+        android:text=""
         android:textAlignment="center"
         android:textSize="34sp"
         android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/viewClassBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="275dp"
+            android:layout_gravity="center"
+
+            android:text="View Classes"
+            />
+
+        <Button
+            android:id="@+id/addClassBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="225dp"
+            android:layout_gravity="center"
+            android:text="Add Class"
+
+            />
+        <Button
+            android:id="@+id/removeClassBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="175dp"
+            android:layout_gravity="center"
+            android:text="Remove Class"
+
+
+
+            />
 
 </FrameLayout>

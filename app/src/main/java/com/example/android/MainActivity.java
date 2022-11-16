@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        Bundle extras=getIntent().getExtras();
+        Bundle extras=getIntent().getExtras();
 //        termPref=extras.getString("term");
 //        yearPref=extras.getString("year");
 //        levelPref=(ArrayList<String>) getIntent().getSerializableExtra("level");
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 fragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainerView,ClassFragment.class,null)
+                        .replace(R.id.fragmentContainerView,ClassFragment.class,extras)
                         .setReorderingAllowed(true)
                         .addToBackStack("tempBackStack")
                         .commit();
