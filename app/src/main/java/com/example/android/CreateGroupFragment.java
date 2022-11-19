@@ -1,5 +1,7 @@
 package com.example.android;
 
+import android.app.FragmentManager;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -50,7 +52,7 @@ public class CreateGroupFragment extends Fragment {
     protected EditText GroupNameInput;
     protected EditText GroupDescInput;
 
-    protected RecyclerViewAdapter_AddStudent addstudentadapter;
+    protected static RecyclerViewAdapter_AddStudent addstudentadapter;
     protected ArrayAdapter<CharSequence> adapter;
     protected  ArrayAdapter<CharSequence> adapter2;
     protected RecyclerView StudentList;
@@ -135,11 +137,12 @@ public class CreateGroupFragment extends Fragment {
             }
         });
 
-        CardView saveFormCV=inflated_view.findViewById(R.id.saveFormCV);
-        saveFormCV.setOnClickListener(new View.OnClickListener() {
+        Button saveFormbtn=inflated_view.findViewById(R.id.saveFormBtn);
+        saveFormbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 SaveForm(view);
+
             }
         });
 
@@ -196,7 +199,7 @@ public class CreateGroupFragment extends Fragment {
 
         return false;
     }
-    public void DeleteEntry(View view)
+    public static void DeleteEntry(View view)
     {
         Chip elementDelete = (Chip) (view);
         String element  = elementDelete.getText().toString();
@@ -243,7 +246,9 @@ public class CreateGroupFragment extends Fragment {
                         Log.w(FRAGMENT_NAME, "Error adding document", e);
                     }
                 });
-        this.getActivity().finish();
+//        this.getActivity().finish();
+//        startActivity(new Intent(this.getActivity().getApplicationContext(),this.getActivity().getClass()));
+        getActivity().onBackPressed();
         Log.i(FRAGMENT_NAME, "Writing to database completed ");
 
     }
