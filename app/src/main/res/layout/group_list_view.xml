@@ -9,11 +9,7 @@
     app:cardBackgroundColor="#F0EAD6"
     app:cardCornerRadius="40dp"
     android:id="@+id/CardGroup"
-    android:onClick="ShowGroupInfo"
-
     >
-
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -68,8 +64,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.488"
             app:srcCompat="@drawable/delete_icon"
-            tools:ignore="SpeakableTextPresentCheck"
-            android:onClick="DeleteGroupEntry"/>
+            tools:ignore="SpeakableTextPresentCheck" />
 
         <ImageView
             android:id="@+id/EditIcon"
@@ -77,7 +72,6 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
             android:minHeight="48dp"
-            android:onClick="EditGroups"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/RemoveGroup"
             app:layout_constraintTop_toTopOf="parent"

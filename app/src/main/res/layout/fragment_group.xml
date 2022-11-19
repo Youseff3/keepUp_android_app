@@ -40,7 +40,7 @@
 
         android:id="@+id/GroupinformationList"
         android:layout_width="match_parent"
-        android:layout_height="581dp"
+        android:layout_height="531dp"
         android:divider="@android:color/transparent"
         android:dividerHeight="10.0sp"
         android:clickable="true"

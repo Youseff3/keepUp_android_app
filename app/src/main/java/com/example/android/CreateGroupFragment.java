@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,7 +54,7 @@ public class CreateGroupFragment extends Fragment {
     protected ArrayAdapter<CharSequence> adapter;
     protected  ArrayAdapter<CharSequence> adapter2;
     protected RecyclerView StudentList;
-    protected ArrayList<String> user = new ArrayList<String >();
+    public static  ArrayList<String> user = new ArrayList<String >();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -100,6 +101,9 @@ public class CreateGroupFragment extends Fragment {
                              Bundle savedInstanceState) {
         View inflated_view=inflater.inflate(R.layout.fragment_create_group, container, false);
 
+//        Chip chip=inflated_view.findViewById(R.id.AddGroup);
+
+
 
         StudentSpinner = inflated_view.findViewById(R.id.StudentList);
         CourseSpinner = inflated_view.findViewById(R.id.CourseSpinner);
@@ -123,6 +127,21 @@ public class CreateGroupFragment extends Fragment {
 
         StudentSpinner.setAdapter(adapter);
         CourseSpinner.setAdapter(adapter2);
+
+        AddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AddUser(view);
+            }
+        });
+
+        CardView saveFormCV=inflated_view.findViewById(R.id.saveFormCV);
+        saveFormCV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SaveForm(view);
+            }
+        });
 
         // Inflate the layout for this fragment
         return inflated_view;

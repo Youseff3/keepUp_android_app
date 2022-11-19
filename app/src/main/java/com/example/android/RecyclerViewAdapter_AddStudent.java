@@ -2,6 +2,7 @@ package com.example.android;
 
 import android.content.Context;
 import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,32 @@ public class RecyclerViewAdapter_AddStudent extends  RecyclerView.Adapter<Recycl
         LayoutInflater inflater = LayoutInflater.from(ctx);
         //Can take in inflater as custom input
         View view = inflater.inflate(R.layout.users_layout_form, parent, false);
+        Chip deleteEntryChip=view.findViewById(R.id.AddGroup);
+        deleteEntryChip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DeleteEntry(view);
+            }
+        });
         return new RecyclerViewAdapter_AddStudent.MyViewHolder(view);
+    }
+    public void DeleteEntry(View view)
+    {
+        Chip elementDelete = (Chip) (view);
+        String element  = elementDelete.getText().toString();
+        boolean removed = false;
+        int i = 0 ;
+//        Log.i(FRAGMENT_NAME, element);
+
+        while(!removed && i< CreateGroupFragment.user.size()) {
+            if (CreateGroupFragment.user.get(i).compareTo(elementDelete.getText().toString()) == 0) {
+                CreateGroupFragment.user.remove(i);
+                removed = true;
+                this.notifyItemRemoved(i);
+                this.notifyItemRangeChanged(i, CreateGroupFragment.user.size() - i);
+            }
+            i++;
+        }
     }
 
     @Override

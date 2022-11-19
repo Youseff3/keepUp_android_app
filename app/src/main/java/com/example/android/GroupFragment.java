@@ -130,6 +130,29 @@ public class GroupFragment extends Fragment {
             GroupDescription.setText(info.getGroupDescription());
             GroupIcon.setColorFilter((colorIcon[ (int)Math.floor(Math.random()*(colorIcon.length))]));
 
+            CardView cardGroupCV=result.findViewById(R.id.CardGroup);
+            cardGroupCV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ShowGroupInfo(view);
+                }
+            });
+
+            ImageView removeGroupIV=result.findViewById(R.id.RemoveGroup);
+            removeGroupIV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DeleteGroupEntry(view);
+                }
+            });
+
+            ImageView editIconIV=result.findViewById(R.id.EditIcon);
+            editIconIV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    EditGroups(view);
+                }
+            });
 
             return result;
         }
