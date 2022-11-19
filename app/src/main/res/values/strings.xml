@@ -50,9 +50,28 @@
         <item>300 Level</item>
         <item>400 Level</item>
     </string-array>
+
+    <string-array name="courses_list">
+        <item>None</item>
+        <item>CP470</item>
+        <item>CP468</item>
+    </string-array>
+
     <string name="proceed_button">Create Account</string>
     <string name="course_selection_button">Course Selection</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="forward"> -&gt; </string>
+    <string name="backward"> &lt;- </string>
+
+    <string-array name="sudent_list">
+        <item> None </item>
+        <item> Carson Aziz</item>
+        <item> MaytheHateGuideYou</item>
+        <item> ThePharoah</item>
+        <item> Phis </item>
+    </string-array>
+
+    <string name="BannerRegistrationPage"> Groups registration page</string>
 </resources>

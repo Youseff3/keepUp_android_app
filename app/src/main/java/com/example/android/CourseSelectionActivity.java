@@ -1,5 +1,6 @@
 package com.example.android;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -24,8 +25,18 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -38,6 +49,8 @@ public class CourseSelectionActivity extends AppCompatActivity {
     ArrayList<ArrayList<String>> coursePreference;
     ArrayList<String> chosenCourses;
     TextView courseTV;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    String userID;
     private static final int[] idArray={
             R.id.courseBtn1,R.id.courseBtn2,R.id.courseBtn3,R.id.courseBtn4,R.id.courseBtn5,R.id.courseBtn6,R.id.courseBtn7,R.id.courseBtn8, R.id.courseBtn9,R.id.courseBtn10,
             R.id.courseBtn11,R.id.courseBtn12, R.id.courseBtn13,R.id.courseBtn14,R.id.courseBtn15,R.id.courseBtn16,R.id.courseBtn17,R.id.courseBtn18,R.id.courseBtn19,R.id.courseBtn20,
@@ -54,14 +67,44 @@ public class CourseSelectionActivity extends AppCompatActivity {
         chosenCourses=new ArrayList<String>();
 
         Bundle extras=getIntent().getExtras();
-        termPref=extras.getString("term");
-        yearPref=extras.getString("year");
-        levelPref=(ArrayList<String>) getIntent().getSerializableExtra("level");
-        Log.i(ACTIVITY_NAME,termPref);
-        Log.i(ACTIVITY_NAME,yearPref);
-        Log.i(ACTIVITY_NAME,String.valueOf(levelPref));
 
-        new GetAllCourses(termPref,levelPref).execute();
+        userID = extras.getString("userID");
+        Log.i(ACTIVITY_NAME, userID);
+
+        DocumentReference docRef = db.collection("user").document(userID);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        termPref = document.getData().get("termPref").toString();
+                        yearPref = document.getData().get("yearPref").toString();
+                        levelPref = (ArrayList<String>) document.getData().get("levelPref");
+
+                        new GetAllCourses(termPref,levelPref).execute();
+
+                        Log.i(ACTIVITY_NAME,termPref);
+                        Log.i(ACTIVITY_NAME,yearPref);
+                        Log.i(ACTIVITY_NAME,String.valueOf(levelPref));
+                    } else {
+                        Log.d(ACTIVITY_NAME, "No such document");
+                    }
+                } else {
+                    Log.d(ACTIVITY_NAME, "get failed with ", task.getException());
+                }
+            }
+        });
+
+//        Bundle extras=getIntent().getExtras();
+//        termPref=extras.getString("term");
+//        yearPref=extras.getString("year");
+//        levelPref=(ArrayList<String>) getIntent().getSerializableExtra("level");
+//        Log.i(ACTIVITY_NAME,termPref);
+//        Log.i(ACTIVITY_NAME,yearPref);
+//        Log.i(ACTIVITY_NAME,String.valueOf(levelPref));
+//
+//        new GetAllCourses(termPref,levelPref).execute();
 
         for (int x=0;x<idArray.length;x++){
             switch_buttons[x]=(Switch)findViewById(idArray[x]);
@@ -238,13 +281,31 @@ public class CourseSelectionActivity extends AppCompatActivity {
         }
     }
 
-
     public void goToMain(View view){
+
+        // Update one field, creating the document if it does not already exist.
+        Map<String, Object> users = new HashMap<>();
+        users.put("courses", chosenCourses);;
+
+        db.collection("user").document(userID)
+                .set(users, SetOptions.merge());
+
+        updateUI(userID);
+
+    }
+    private void updateUI(String userID) {
+
         Intent intent=new Intent(CourseSelectionActivity.this,MainActivity.class);
-        intent.putExtra("term",termPref);
-        intent.putExtra("year",yearPref);
-        intent.putExtra("level",levelPref);
-        intent.putExtra("courses",chosenCourses);
+        intent.putExtra("userID", userID);
         startActivity(intent);
     }
+
+//    public void goToMain(View view){
+//        Intent intent=new Intent(CourseSelectionActivity.this,MainActivity.class);
+//        intent.putExtra("term",termPref);
+//        intent.putExtra("year",yearPref);
+//        intent.putExtra("level",levelPref);
+//        intent.putExtra("courses",chosenCourses);
+//        startActivity(intent);
+//    }
 }

@@ -18,6 +18,8 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
@@ -36,7 +38,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -60,6 +64,8 @@ public class RegisterActivity2 extends AppCompatActivity {
     TextView termTV;
     Spinner yearSpin;
     Spinner termSpin;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    String userID;
 
     private static final int[] idArray2={R.id.levelBtn1,R.id.levelBtn2,R.id.levelBtn3,R.id.levelBtn4};
     private Switch[] level_switch_buttons=new Switch[idArray2.length];
@@ -69,6 +75,11 @@ public class RegisterActivity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register2);
         setTitle("Registration");
+
+        Bundle extras=getIntent().getExtras();
+
+        userID = extras.getString("userID");
+        Log.i(ACTIVITY_NAME, userID);
 
         levelPreference=new ArrayList<String>();
         yearTV=findViewById(R.id.yearTextView);
@@ -268,12 +279,32 @@ public class RegisterActivity2 extends AppCompatActivity {
         }
     }
 
-
     public void goToCourseSelection(View view){
+
+        // Update one field, creating the document if it does not already exist.
+        Map<String, Object> users = new HashMap<>();
+        users.put("yearPref", yearPreference);
+        users.put("termPref", termPreference);
+        users.put("levelPref", levelPreference);
+
+        db.collection("user").document(userID)
+                .set(users, SetOptions.merge());
+
+        updateUI(userID);
+
+    }
+
+//    public void goToCourseSelection(View view){
+//        Intent intent=new Intent(RegisterActivity2.this,CourseSelectionActivity.class);
+//        intent.putExtra("year",yearPreference);
+//        intent.putExtra("term",termPreference);
+//        intent.putExtra("level",levelPreference);
+//        startActivity(intent);
+//    }
+    private void updateUI(String userID) {
+
         Intent intent=new Intent(RegisterActivity2.this,CourseSelectionActivity.class);
-        intent.putExtra("year",yearPreference);
-        intent.putExtra("term",termPreference);
-        intent.putExtra("level",levelPreference);
+        intent.putExtra("userID", userID);
         startActivity(intent);
     }
 }

@@ -37,6 +37,7 @@ public class ClassFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment ClassFragment.
      */
+
     // TODO: Rename and change types and number of parameters
     public static ClassFragment newInstance(String param1, String param2) {
         ClassFragment fragment = new ClassFragment();

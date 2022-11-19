@@ -3,15 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".AppointmentFragment">
 
-    <TextView
-        android:id="@+id/appointmentFragmentTextView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="20dp"
-        android:text="Appointment Fragment"
-        android:textAlignment="center"
-        android:textSize="34sp"
-        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/bookAppointmentBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Book Appointment"
+        />
+
+    <Button
+        android:id="@+id/cancelAppointmentBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Cancel Appointment"
+        android:layout_marginTop="75dp"
+        />
+
+
+
 </FrameLayout>

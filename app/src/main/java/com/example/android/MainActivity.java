@@ -1,5 +1,6 @@
 package com.example.android;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -73,6 +74,11 @@ public class MainActivity extends AppCompatActivity {
                         .commit();
             }
         });
+    }
+
+    public void newEventAction(View view)
+    {
+        startActivity(new Intent(this, EventLayoutActivity.class));
     }
 
 
