@@ -15,19 +15,26 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,8 +48,7 @@ import java.util.Map;
 public class CreateGroupFragment extends Fragment {
 
     protected static final String FRAGMENT_NAME="CreateGroupFragment";
-
-
+    String first_name;
     protected FirebaseFirestore db = FirebaseFirestore.getInstance();
     protected static final int MAXIMUM = 3;
     protected Spinner StudentSpinner;
@@ -60,11 +66,11 @@ public class CreateGroupFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM1 = "userID";
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String UserId;
     private String mParam2;
 
     public CreateGroupFragment() {
@@ -93,7 +99,7 @@ public class CreateGroupFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            UserId = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
@@ -103,7 +109,6 @@ public class CreateGroupFragment extends Fragment {
                              Bundle savedInstanceState) {
         View inflated_view=inflater.inflate(R.layout.fragment_create_group, container, false);
 
-//        Chip chip=inflated_view.findViewById(R.id.AddGroup);
 
 
 
@@ -115,6 +120,7 @@ public class CreateGroupFragment extends Fragment {
         ProgressIndicator = inflated_view.findViewById(R.id.ProgressIndicator);
         GroupNameInput = inflated_view.findViewById(R.id.TextGroupName);
         GroupDescInput = inflated_view.findViewById(R.id.GroupDescInput);
+
 
 
 
@@ -134,6 +140,18 @@ public class CreateGroupFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 AddUser(view);
+            }
+        });
+
+        CourseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
 
@@ -158,9 +176,9 @@ public class CreateGroupFragment extends Fragment {
 
                 String selected_item = StudentSpinner.getItemAtPosition(spinner_position).toString();
                 Log.i(FRAGMENT_NAME, selected_item);
-
                 user.add(selected_item);
                 addstudentadapter.notifyItemInserted(user.size());
+
 
             }
 
@@ -194,8 +212,7 @@ public class CreateGroupFragment extends Fragment {
         if (CourseSpinner.getSelectedItemPosition() != 0 )
             if (!(GroupNameInput.getText().toString().compareTo("")==0) )
                 if (!(GroupDescInput.getText().toString().compareTo("") == 0))
-                    if (user.size()>0)
-                        return true;
+                    return user.size() > 0;
 
         return false;
     }
@@ -221,6 +238,9 @@ public class CreateGroupFragment extends Fragment {
     private void WriteToDatabase()
     {
         Log.i(FRAGMENT_NAME, "Writing to database ");
+        user.add(getusername(UserId));
+        Log.i(FRAGMENT_NAME, " " + first_name);
+
         Map<String, Object> group = new HashMap<>();
         group.put("course", CourseSpinner.getSelectedItemPosition());
         group.put("description", GroupDescInput.getText().toString());
@@ -246,10 +266,36 @@ public class CreateGroupFragment extends Fragment {
                         Log.w(FRAGMENT_NAME, "Error adding document", e);
                     }
                 });
-//        this.getActivity().finish();
-//        startActivity(new Intent(this.getActivity().getApplicationContext(),this.getActivity().getClass()));
-        getActivity().onBackPressed();
         Log.i(FRAGMENT_NAME, "Writing to database completed ");
+
+        getFragmentManager().popBackStack();
+
+    }
+
+    public String getusername(String UserId) {
+
+        Log.i(FRAGMENT_NAME, " " +  UserId);
+        DocumentReference docRef = db.collection("user").document(UserId);
+
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        first_name = (String) document.get("first_name");
+                        Log.i(FRAGMENT_NAME, "This is first name: "+ first_name);
+
+                    } else {
+                        Log.d(FRAGMENT_NAME, "No such document");
+                    }
+                } else {
+                    Log.d(FRAGMENT_NAME, "get failed with ", task.getException());
+                }
+            }
+        });
+        Log.i(FRAGMENT_NAME, "This is the first name pt2: " + first_name);
+        return first_name;
 
     }
 }

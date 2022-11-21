@@ -27,8 +27,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -71,6 +74,7 @@ public class GroupFragment extends Fragment {
         public  ArrayList<String> members;
 
         private GroupsInformation(String id , String NameofGroup, String GroupDescription, ArrayList<String> members) {
+            this.id = id;
             this.NameofGroup = NameofGroup ;
             this.GroupDescription =GroupDescription;
             this.members = members;
@@ -298,6 +302,9 @@ public class GroupFragment extends Fragment {
                         group.GroupDescription = NewGroupDesc.getText().toString();
                         adapter.notifyDataSetChanged();
 
+
+                        updateDatabase(group.getid(), group.NameofGroup, group.GroupDescription);
+
                     }
 
                 });
@@ -350,6 +357,11 @@ public class GroupFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        groups.clear();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -368,12 +380,52 @@ public class GroupFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainerView,CreateGroupFragment.class,null)
+                        .replace(R.id.fragmentContainerView,CreateGroupFragment.class,getArguments())
                         .setReorderingAllowed(true)
                         .addToBackStack("tempBackStack")
                         .commit();
             }
         });
         return test;
+    }
+
+    public boolean updateDatabase(String id, String groupname, String groupdescription)
+    {
+        Log.i(FRAGMENT_NAME, "Message id: " + id);
+        DocumentReference groupRef = db.collection("groups").document(id);
+
+        groupRef
+                .update("name", groupname)
+
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(FRAGMENT_NAME, "Group name successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(FRAGMENT_NAME, "Error updating document id:" + id, e);
+
+                    }
+                });
+
+        groupRef
+                .update("description", groupdescription)
+
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(FRAGMENT_NAME, "Group Desc successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(FRAGMENT_NAME, "Error updating document", e);
+                    }
+                });
+        return true;
     }
 }
