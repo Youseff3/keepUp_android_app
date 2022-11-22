@@ -273,18 +273,13 @@ public class GroupFragment extends Fragment {
         TextView GroupDesc = views.findViewById(R.id.ViewGroupDesc);
         TextView Instructor = views.findViewById(R.id.ViewGroupInstructor);
 
-        /**
-         * Todo: Check bug out
-         */
-/*
-        for (int i =1; i < group.members.size()-1; i++)
+        for (int i =0; i < (group.members.size()); i++)
         {
             switch_buttons[i]= views.findViewById(memberchip[i]);
             switch_buttons[i].setVisibility(View.VISIBLE);
             switch_buttons[i].setText(group.members.get(i));
 
         }
-*/
 
 
         GroupName.setText(group.NameofGroup);
@@ -444,7 +439,7 @@ public class GroupFragment extends Fragment {
 
         GroupLists = test.findViewById(R.id.GroupinformationList);
         nogroupinfo = test.findViewById(R.id.NoGroupinfo);
-        EmailInstrucorBtn = test.findViewById(R.id.EmailInstructorBtn);
+     //  EmailInstrucorBtn = test.findViewById(R.id.EmailInstructorBtn);
 
         adapter = new ViewGroupsAdapter(this.getContext(), 0 );
         GroupLists.setAdapter(adapter);
