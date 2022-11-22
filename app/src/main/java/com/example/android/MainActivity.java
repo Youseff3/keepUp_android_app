@@ -12,6 +12,8 @@ import androidx.fragment.app.FragmentManager;
 
 import android.widget.Button;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,13 +25,16 @@ public class MainActivity extends AppCompatActivity {
     Button classButton;
     Button groupButton;
     Button appointmentButton;
-
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    public static String userID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Bundle extras=getIntent().getExtras();
+        userID = extras.getString("userID");
+
 //        termPref=extras.getString("term");
 //        yearPref=extras.getString("year");
 //        levelPref=(ArrayList<String>) getIntent().getSerializableExtra("level");

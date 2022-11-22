@@ -3,8 +3,10 @@ package com.example.android;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,15 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.TextStyle;
@@ -22,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,7 +41,8 @@ import java.util.Locale;
  * create an instance of this fragment.
  */
 public class BookAppointmentFragment extends Fragment {
-
+    private String FRAGMENT_NAME = "BookAppointmentFragment";
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     private TextView monthDayText;
     private ListView hourListView;
     private TextView dayOfWeekTV;
@@ -156,7 +169,32 @@ public class BookAppointmentFragment extends Fragment {
 
     public void get_a_course(Spinner courseSpinner) {
 //        Log.i(ACTIVITY_NAME,"get a year");
+
+        courseList= new ArrayList<String>();
+        CollectionReference docRef = db.collection("user").document(MainActivity.userID).collection("courses");
+
+        docRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(FRAGMENT_NAME, document.getId() + " => " + document.getData());
+                        for(Map.Entry<String,Object> entry: document.getData().entrySet()) {
+                            courseList.add(entry.getKey());
+                            Log.i(FRAGMENT_NAME, entry.getKey());
+                            Log.i(FRAGMENT_NAME, String.valueOf(entry.getValue()));
+
+                        }
+                    }
+                } else {
+                    Log.d(FRAGMENT_NAME, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+
+/*
         courseList = Arrays.asList(getResources().getStringArray(R.array.courses_list));
+*/
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter( getContext(), android.R.layout.simple_spinner_dropdown_item,courseList);
         courseSpinner.setAdapter(adapter);
         courseSpinner.setOnItemSelectedListener(

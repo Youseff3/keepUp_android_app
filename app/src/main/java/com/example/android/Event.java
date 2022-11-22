@@ -41,7 +41,7 @@ public class Event {
     public Event(String name, String desc,String course,LocalDate date, LocalTime time)
     {
         this.name = name;
-        this.desc=desc;
+        this.desc= desc;
         this.date = date;
         this.time = time;
         this.course=course;
