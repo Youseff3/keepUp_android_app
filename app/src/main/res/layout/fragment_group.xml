@@ -37,6 +37,16 @@
 
 
     </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/NoGroupinfo"
+        android:layout_width="match_parent"
+        android:layout_height="531dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/GroupinformationList"
+        app:layout_constraintTop_toTopOf="@+id/GroupinformationList"
+        tools:layout_editor_absoluteX="20dp"
+        android:gravity="center"/>
     <ListView
 
         android:id="@+id/GroupinformationList"
@@ -50,7 +60,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:focusable="true" />
+        android:focusable="true" >
+
+
+    </ListView>
 
 
 

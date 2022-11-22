@@ -71,6 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
                             Map<String, Object> currUser = new HashMap<>();
                             currUser.put("first_name", firstName);
                             currUser.put("last_name", lastName);
+                            currUser.put("email", email);
                             users.document(userID).set(currUser);
 
                             updateUI(user, userID);

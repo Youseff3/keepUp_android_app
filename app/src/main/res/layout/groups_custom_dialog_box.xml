@@ -158,7 +158,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="#808080"
 
-                android:text="Email Group"
+                android:text="Email Instructor"
                 android:textColor="#FFFFFF" />
         </LinearLayout>
 

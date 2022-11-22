@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -36,7 +37,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.auth.User;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +52,7 @@ import java.util.Map;
 public class CreateGroupFragment extends Fragment {
 
     protected static final String FRAGMENT_NAME="CreateGroupFragment";
-    String first_name;
+    //String first_name;
     protected FirebaseFirestore db = FirebaseFirestore.getInstance();
     protected static final int MAXIMUM = 3;
     protected Spinner StudentSpinner;
@@ -63,6 +67,8 @@ public class CreateGroupFragment extends Fragment {
     protected  ArrayAdapter<CharSequence> adapter2;
     protected RecyclerView StudentList;
     public static  ArrayList<String> user = new ArrayList<String >();
+    public ArrayList<String> courses = new ArrayList<>();
+    public ArrayList<String> students = new ArrayList<>();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -124,18 +130,15 @@ public class CreateGroupFragment extends Fragment {
 
 
 
-        adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.sudent_list, android.R.layout.simple_spinner_item );
-        adapter2 = ArrayAdapter.createFromResource(this.getContext(), R.array.courses_list, android.R.layout.simple_spinner_item );
+        adapter  = new ArrayAdapter(getContext(),  android.R.layout.simple_spinner_item, students);
         adapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ProgressIndicator.setIndeterminate(false);
 
         StudentList.setAdapter(addstudentadapter);
         StudentList.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false));
-
         StudentSpinner.setAdapter(adapter);
-        CourseSpinner.setAdapter(adapter2);
 
+        PopulateFormDb(UserId);
         AddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,6 +149,44 @@ public class CreateGroupFragment extends Fragment {
         CourseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                students.clear();
+                students.add("None");
+                //Have to reset existing chipview data once user selects a diff item
+                boolean changed = false;
+                for (int j = 1; j<user.size(); i++)
+                {
+                    user.remove(j);
+                    changed = true;
+
+                }
+                if (changed) {
+                    addstudentadapter.notifyDataSetChanged();
+                }
+
+                db.collection("user")
+                        .whereArrayContains("courses", courses.get(i))
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        String first_name = (String) document.get("first_name");
+                                        if (first_name.compareTo(user.get(0)) != 0 ) {
+                                            students.add((String) document.get("first_name"));
+                                        }
+                                        adapter.notifyDataSetChanged();
+
+
+                                    }
+                                } else {
+                                    Log.d(FRAGMENT_NAME, "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
+
+
+
 
             }
 
@@ -177,7 +218,7 @@ public class CreateGroupFragment extends Fragment {
                 String selected_item = StudentSpinner.getItemAtPosition(spinner_position).toString();
                 Log.i(FRAGMENT_NAME, selected_item);
                 user.add(selected_item);
-                addstudentadapter.notifyItemInserted(user.size());
+                addstudentadapter.notifyDataSetChanged();
 
 
             }
@@ -225,7 +266,7 @@ public class CreateGroupFragment extends Fragment {
         Log.i(FRAGMENT_NAME, element);
 
         while(!removed && i< user.size()) {
-            if (user.get(i).compareTo(elementDelete.getText().toString()) == 0) {
+            if (user.get(i).compareTo(elementDelete.getText().toString()) == 0 && i!=0) {
                 user.remove(i);
                 removed = true;
                 addstudentadapter.notifyItemRemoved(i);
@@ -235,11 +276,10 @@ public class CreateGroupFragment extends Fragment {
             i++;
         }
     }
-    private void WriteToDatabase()
+    public void WriteToDatabase()
     {
         Log.i(FRAGMENT_NAME, "Writing to database ");
-        user.add(getusername(UserId));
-        Log.i(FRAGMENT_NAME, " " + first_name);
+
 
         Map<String, Object> group = new HashMap<>();
         group.put("course", CourseSpinner.getSelectedItemPosition());
@@ -267,13 +307,18 @@ public class CreateGroupFragment extends Fragment {
                     }
                 });
         Log.i(FRAGMENT_NAME, "Writing to database completed ");
-
         getFragmentManager().popBackStack();
 
     }
 
-    public String getusername(String UserId) {
 
+    /***
+     * Gets the userId that is passed on and finds the name of the user to add to the list of members
+     * Populates the Course Spinner with the data the user enters
+     *
+     * @param UserId
+     */
+    public void PopulateFormDb(String UserId) {
         Log.i(FRAGMENT_NAME, " " +  UserId);
         DocumentReference docRef = db.collection("user").document(UserId);
 
@@ -283,8 +328,23 @@ public class CreateGroupFragment extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        first_name = (String) document.get("first_name");
-                        Log.i(FRAGMENT_NAME, "This is first name: "+ first_name);
+                        user.add ( (String) document.get("first_name") ) ;
+                        addstudentadapter.notifyItemInserted(user.size());
+                        Log.i(FRAGMENT_NAME, "Courses : " + document.get("courses"));
+
+                        courses.add("None");
+                        ArrayList<String> dbCourses = (ArrayList<String> ) document.get("courses");
+
+                        for (int i =0; i< dbCourses.size(); i++) {
+                            courses.add(dbCourses.get(i));
+                        }
+
+                        adapter2 = new ArrayAdapter(getContext(),  android.R.layout.simple_spinner_item, courses );
+                        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        CourseSpinner.setAdapter(adapter2);
+
+
+
 
                     } else {
                         Log.d(FRAGMENT_NAME, "No such document");
@@ -294,8 +354,13 @@ public class CreateGroupFragment extends Fragment {
                 }
             }
         });
-        Log.i(FRAGMENT_NAME, "This is the first name pt2: " + first_name);
-        return first_name;
 
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        user.clear();
+        students.clear();
     }
 }

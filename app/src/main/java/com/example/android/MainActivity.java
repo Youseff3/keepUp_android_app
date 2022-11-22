@@ -1,6 +1,7 @@
 package com.example.android;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         groupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 fragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainerView,GroupFragment.class,extras)
                         .setReorderingAllowed(true)
