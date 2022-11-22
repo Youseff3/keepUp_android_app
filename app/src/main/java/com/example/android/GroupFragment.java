@@ -228,7 +228,7 @@ public class GroupFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String groupName = document.getString("name");
                                 String groupDesc = document.getString("description");
-                                //Log.i( " Array information for members : ", "  " +  document.get("members") ) ;
+                                Log.i( " Array information for members : ", "  " +  document.get("members") ) ;
 
                                 groups.add(new GroupsInformation(document.getId(), groupName, groupDesc, (ArrayList<String>) document.get("members")));
                                 adapter.notifyDataSetChanged();
@@ -266,19 +266,25 @@ public class GroupFragment extends Fragment {
         });
 
 
-        //Log.i(FRAGMENT_NAME, "List Item Clicked");
+        Log.i(FRAGMENT_NAME, "List Item Clicked");
         int positionitem= (int) view.getTag();
         GroupsInformation group = groups.get(positionitem);
         GroupName = views.findViewById(R.id.ViewGroupName);
         TextView GroupDesc = views.findViewById(R.id.ViewGroupDesc);
         TextView Instructor = views.findViewById(R.id.ViewGroupInstructor);
-        for (int i =0; i < group.members.size(); i++)
+
+        /**
+         * Todo: Check bug out
+         */
+/*
+        for (int i =1; i < group.members.size()-1; i++)
         {
             switch_buttons[i]= views.findViewById(memberchip[i]);
             switch_buttons[i].setVisibility(View.VISIBLE);
             switch_buttons[i].setText(group.members.get(i));
 
         }
+*/
 
 
         GroupName.setText(group.NameofGroup);
