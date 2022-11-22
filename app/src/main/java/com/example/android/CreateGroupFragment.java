@@ -134,6 +134,10 @@ public class CreateGroupFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
         StudentSpinner.setAdapter(adapter);
 
+        adapter2 = new ArrayAdapter(getContext(),  android.R.layout.simple_spinner_item, courses );
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        CourseSpinner.setAdapter(adapter2);
+
         ProgressIndicator.setIndeterminate(false);
 
         StudentList.setAdapter(addstudentadapter);
@@ -152,13 +156,13 @@ public class CreateGroupFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 students.clear();
                 students.add("None");
+                adapter.notifyDataSetChanged();
                 //Have to reset existing chipview data once user selects a diff item
                 boolean changed = false;
-                for (int j = 1; j<user.size(); i++)
+                for (int j = 1; j<user.size(); j++)
                 {
                     user.remove(j);
                     changed = true;
-
                 }
                 if (changed) {
                     addstudentadapter.notifyDataSetChanged();
@@ -339,12 +343,7 @@ public class CreateGroupFragment extends Fragment {
                         for (int i =0; i< dbCourses.size(); i++) {
                             courses.add(dbCourses.get(i));
                         }
-
-                        adapter2 = new ArrayAdapter(getContext(),  android.R.layout.simple_spinner_item, courses );
-                        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        CourseSpinner.setAdapter(adapter2);
-
-
+                        adapter2.notifyDataSetChanged();
 
 
                     } else {
@@ -363,5 +362,6 @@ public class CreateGroupFragment extends Fragment {
         super.onStop();
         user.clear();
         students.clear();
+       // courses.clear();
     }
 }

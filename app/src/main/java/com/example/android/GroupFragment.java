@@ -35,6 +35,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -197,7 +198,8 @@ public class GroupFragment extends Fragment {
                             nogroupinfo.setVisibility(View.VISIBLE);
                             GroupLists.setVisibility(View.INVISIBLE);
                         }
-                        deletefromdatabase(groupdel.id, "saleem" ); //TODO: change mparam2 to username
+                        Log.i(FRAGMENT_NAME, "This is the user: " + mParam2);
+                        deletefromdatabase(groupdel.id, mParam2 ); //TODO: change mparam2 to username
                     } });
         builder.setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {
@@ -213,13 +215,12 @@ public class GroupFragment extends Fragment {
     /****
      * Displays Group information
      */
-    public void DisplayGroupInfo()
+    public void DisplayGroupInfo(String name)
     {
 
-
-       db.collection("groups").whereArrayContains("members", "saleem") //TODO: change value to username
+       Log.i(FRAGMENT_NAME, "This is the second param: " + name );
+       db.collection("groups").whereArrayContains("members", name) //TODO: change value to username
                 .get()
-
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -227,7 +228,7 @@ public class GroupFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String groupName = document.getString("name");
                                 String groupDesc = document.getString("description");
-                                Log.i( " Array information for members : ", "  " +  document.get("members") ) ;
+                                //Log.i( " Array information for members : ", "  " +  document.get("members") ) ;
 
                                 groups.add(new GroupsInformation(document.getId(), groupName, groupDesc, (ArrayList<String>) document.get("members")));
                                 adapter.notifyDataSetChanged();
@@ -265,7 +266,7 @@ public class GroupFragment extends Fragment {
         });
 
 
-        Log.i(FRAGMENT_NAME, "List Item Clicked");
+        //Log.i(FRAGMENT_NAME, "List Item Clicked");
         int positionitem= (int) view.getTag();
         GroupsInformation group = groups.get(positionitem);
         GroupName = views.findViewById(R.id.ViewGroupName);
@@ -379,7 +380,7 @@ public class GroupFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String UserID  = "userID";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String username = "username";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -402,7 +403,7 @@ public class GroupFragment extends Fragment {
         GroupFragment fragment = new GroupFragment();
         Bundle args = new Bundle();
         args.putString(UserID, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(username, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -412,7 +413,7 @@ public class GroupFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(UserID);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam2 = getArguments().getString(username);
         }
     }
 
@@ -420,6 +421,12 @@ public class GroupFragment extends Fragment {
     public void onStop() {
         super.onStop();
         groups.clear();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        DisplayGroupInfo(mParam1);
     }
 
     @Override
@@ -453,7 +460,24 @@ public class GroupFragment extends Fragment {
                         .commit();
             }
         });
-        DisplayGroupInfo();
+
+        db.collection("user").whereEqualTo(FieldPath.documentId(), mParam1)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                mParam1 = document.getString("first_name");
+                                DisplayGroupInfo(mParam1);
+                            }
+                        } else {
+                            Log.w(FRAGMENT_NAME, "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+
+
         return test;
     }
 
@@ -497,7 +521,7 @@ public class GroupFragment extends Fragment {
     {
         DocumentReference groupsRef = db.collection("groups").document(groupid);
         Log.i(FRAGMENT_NAME, "Group id " + groupid + " username " + username);
-         groupsRef.update("members", FieldValue.arrayRemove(username));
+         groupsRef.update("members", FieldValue.arrayRemove(mParam1));
 
 
         /***
