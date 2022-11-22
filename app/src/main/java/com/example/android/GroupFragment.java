@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import com.google.firebase.firestore.EventListener;
 
@@ -19,10 +21,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -57,11 +61,11 @@ public class GroupFragment extends Fragment {
 
     private static final int[] memberchip={R.id.Chip1,R.id.Chip2,R.id.Chip3};
     private final Chip[] switch_buttons=new Chip[memberchip.length];
-
+    private  Button EmailInstrucorBtn;
     private ViewGroupsAdapter adapter;
     private ArrayList<GroupsInformation> groups = new ArrayList<GroupsInformation>();
     private ListView GroupLists;
-
+    private TextView GroupName;
     private View result;
     //DocumentReference docRef;
     private TextView message;
@@ -105,6 +109,8 @@ public class GroupFragment extends Fragment {
             return this.GroupDescription;
         }
     }
+
+
     private class ViewGroupsAdapter extends ArrayAdapter<String> {
 
         public ViewGroupsAdapter(@NonNull Context context, int resource) {
@@ -250,12 +256,19 @@ public class GroupFragment extends Fragment {
 
         LayoutInflater inflater = this.getLayoutInflater();
         final View views = inflater.inflate(R.layout.groups_custom_dialog_box, null);
+        EmailInstrucorBtn = views.findViewById(R.id.EmailInstructorBtn);
+        EmailInstrucorBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EmailInstructor(view);
+            }
+        });
+
 
         Log.i(FRAGMENT_NAME, "List Item Clicked");
         int positionitem= (int) view.getTag();
         GroupsInformation group = groups.get(positionitem);
-
-        TextView GroupName = views.findViewById(R.id.ViewGroupName);
+        GroupName = views.findViewById(R.id.ViewGroupName);
         TextView GroupDesc = views.findViewById(R.id.ViewGroupDesc);
         TextView Instructor = views.findViewById(R.id.ViewGroupInstructor);
         for (int i =0; i < group.members.size(); i++)
@@ -291,6 +304,18 @@ public class GroupFragment extends Fragment {
      */
     public void EmailInstructor(View view)
     {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"ibra5690@mylaurier.ca"});
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Email from "+ GroupName.getText());
+        intent.setData(Uri.parse("mailto:"));
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Toast.makeText(getActivity(), "You do not have an app that can send emails",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+
 
     }
 
@@ -321,14 +346,23 @@ public class GroupFragment extends Fragment {
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
+                        boolean changed = false;
                         EditText NewGroupName = views.findViewById(R.id.GroupNameEdit);
                         EditText NewGroupDesc = views.findViewById(R.id.GroupDescEdit);
-                        group.NameofGroup = NewGroupName.getText().toString();
-                        group.GroupDescription = NewGroupDesc.getText().toString();
-                        adapter.notifyDataSetChanged();
 
+                        if (NewGroupName.getText().toString().compareTo("") != 0 ){
+                            changed = true;
+                            group.NameofGroup = NewGroupName.getText().toString();
+                        }
+                        if (NewGroupDesc.getText().toString().compareTo("") != 0 ) {
+                            changed = true;
+                            group.GroupDescription = NewGroupDesc.getText().toString();
+                        }
 
-                        updateDatabase(group.getid(), group.NameofGroup, group.GroupDescription);
+                        if(changed) {
+                            adapter.notifyDataSetChanged();
+                            updateDatabase(group.getid(), group.NameofGroup, group.GroupDescription);
+                        }
 
                     }
 
@@ -397,13 +431,13 @@ public class GroupFragment extends Fragment {
 
         GroupLists = test.findViewById(R.id.GroupinformationList);
         nogroupinfo = test.findViewById(R.id.NoGroupinfo);
+        EmailInstrucorBtn = test.findViewById(R.id.EmailInstructorBtn);
 
         adapter = new ViewGroupsAdapter(this.getContext(), 0 );
         GroupLists.setAdapter(adapter);
         nogroupinfo.setText("No groups available! ");
         nogroupinfo.setVisibility(View.VISIBLE);
         GroupLists.setVisibility(View.INVISIBLE);
-
 
 
 
@@ -445,7 +479,6 @@ public class GroupFragment extends Fragment {
 
         groupRef
                 .update("description", groupdescription)
-
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -465,9 +498,6 @@ public class GroupFragment extends Fragment {
         DocumentReference groupsRef = db.collection("groups").document(groupid);
         Log.i(FRAGMENT_NAME, "Group id " + groupid + " username " + username);
          groupsRef.update("members", FieldValue.arrayRemove(username));
-
-
-
 
 
         /***

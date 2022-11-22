@@ -54,7 +54,7 @@ public class CreateGroupFragment extends Fragment {
     protected static final String FRAGMENT_NAME="CreateGroupFragment";
     //String first_name;
     protected FirebaseFirestore db = FirebaseFirestore.getInstance();
-    protected static final int MAXIMUM = 3;
+    protected static final int MAXIMUM = 4;
     protected Spinner StudentSpinner;
     protected Spinner CourseSpinner;
     protected Button AddButton;
@@ -132,11 +132,12 @@ public class CreateGroupFragment extends Fragment {
 
         adapter  = new ArrayAdapter(getContext(),  android.R.layout.simple_spinner_item, students);
         adapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+        StudentSpinner.setAdapter(adapter);
+
         ProgressIndicator.setIndeterminate(false);
 
         StudentList.setAdapter(addstudentadapter);
         StudentList.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        StudentSpinner.setAdapter(adapter);
 
         PopulateFormDb(UserId);
         AddButton.setOnClickListener(new View.OnClickListener() {
@@ -173,7 +174,7 @@ public class CreateGroupFragment extends Fragment {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         String first_name = (String) document.get("first_name");
                                         if (first_name.compareTo(user.get(0)) != 0 ) {
-                                            students.add((String) document.get("first_name"));
+                                            students.add(first_name);
                                         }
                                         adapter.notifyDataSetChanged();
 
