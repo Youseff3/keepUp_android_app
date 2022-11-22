@@ -46,6 +46,22 @@
     </LinearLayout>
 
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/courseSelectionTV"
+        android:text="Please select one of the following courses:"
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        />
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:id="@+id/courseSelectionSpinner"
+        />
+    <TextView
         android:id="@+id/dayOfWeekTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,15 +70,23 @@
         android:textSize="18sp"
         android:layout_marginBottom="20dp"/>
 
-    <Button
+<!--    <Button-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="New Appointment"-->
+<!--        android:background="@null"-->
+<!--        android:textStyle="bold"-->
+<!--        android:onClick="newEventAction"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:textSize="20sp"/>-->
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Appointment"
-        android:background="@null"
-        android:textStyle="bold"
-        android:onClick="newEventAction"
+        android:text="Please select one of the available times below: "
         android:layout_gravity="center"
-        android:textSize="20sp"/>
+        android:textAlignment="center"
+        android:textSize="18sp"
+        />
 
     <ListView
         android:id="@+id/hourListView"

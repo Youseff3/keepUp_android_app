@@ -1,6 +1,7 @@
 package com.example.android;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +15,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HourAdapter extends ArrayAdapter<HourEvent>
-{
-    public HourAdapter(@NonNull Context context, List<HourEvent> hourEvents)
-    {
+public class HourAdapter extends ArrayAdapter<HourEvent> {
+    public HourAdapter(@NonNull Context context, List<HourEvent> hourEvents) {
         super(context, 0, hourEvents);
     }
 
@@ -27,9 +26,9 @@ public class HourAdapter extends ArrayAdapter<HourEvent>
     {
         HourEvent event = getItem(position);
 
-        if (convertView == null)
+        if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.hour_cell, parent, false);
-
+        }
         setHour(convertView, event.time);
         setEvents(convertView, event.events);
 
@@ -47,6 +46,7 @@ public class HourAdapter extends ArrayAdapter<HourEvent>
         TextView event1 = convertView.findViewById(R.id.event1);
         TextView event2 = convertView.findViewById(R.id.event2);
         TextView event3 = convertView.findViewById(R.id.event3);
+        Log.i("events list size",String.valueOf(events.size()));
 
         if(events.size() == 0) {
             hideEvent(event1);

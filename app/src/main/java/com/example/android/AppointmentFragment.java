@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -62,12 +63,39 @@ public class AppointmentFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View inflatedLayout=inflater.inflate(R.layout.fragment_appointment, container, false);
+
+        TextView appointmentsList = inflatedLayout.findViewById(R.id.appointmentList);
+        if (Event.eventsList.size()>0){
+            appointmentsList.setText("");
+            appointmentsList.append("List of all appointments: \n");
+            for(Event event:Event.eventsList){
+                appointmentsList.append("Course: "+event.getCourse()+", ");
+                appointmentsList.append("Title: "+event.getName()+", ");
+                appointmentsList.append("Date: "+event.getDate()+", ");
+                appointmentsList.append("Time: "+event.getTime()+"\n \n");
+            }
+        }else{
+            appointmentsList.setText("You do not have any booked appointments");
+        }
+
         Button bookAppBtn=inflatedLayout.findViewById(R.id.bookAppointmentBtn);
         bookAppBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainerView,BookAppointmentFragment.class,null)
+                        .setReorderingAllowed(true)
+                        .addToBackStack("tempBackStack")
+                        .commit();
+            }
+        });
+
+        Button cancelAppBtn = inflatedLayout.findViewById(R.id.cancelAppointmentBtn);
+        cancelAppBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView,CancelAppointmentFragment.class,null)
                         .setReorderingAllowed(true)
                         .addToBackStack("tempBackStack")
                         .commit();

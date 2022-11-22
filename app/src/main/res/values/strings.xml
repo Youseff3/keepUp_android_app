@@ -52,7 +52,6 @@
     </string-array>
 
     <string-array name="courses_list">
-        <item>None</item>
         <item>CP470</item>
         <item>CP468</item>
     </string-array>

@@ -8,14 +8,19 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -28,6 +33,9 @@ public class BookAppointmentFragment extends Fragment {
     private TextView monthDayText;
     private ListView hourListView;
     private TextView dayOfWeekTV;
+    private Spinner courseSpinner;
+    String coursePreference;
+    List<String> courseList;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -75,6 +83,9 @@ public class BookAppointmentFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View inflatedView=inflater.inflate(R.layout.fragment_book_appointment, container, false);
+        courseSpinner=inflatedView.findViewById(R.id.courseSelectionSpinner);
+        get_a_course(courseSpinner);
+
         monthDayText=inflatedView.findViewById(R.id.monthDayText);
         hourListView=inflatedView.findViewById(R.id.hourListView);
         dayOfWeekTV=inflatedView.findViewById(R.id.dayOfWeekTV);
@@ -98,6 +109,17 @@ public class BookAppointmentFragment extends Fragment {
             }
         });
 
+        hourListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent=new Intent(getActivity(),EventLayoutActivity.class);
+                String time=((HourEvent)hourListView.getItemAtPosition(i)).getTime().toString();
+                intent.putExtra("time",time);
+                intent.putExtra("course",coursePreference);
+                startActivity(intent);
+            }
+        });
+
         return inflatedView;
     }
 
@@ -117,16 +139,37 @@ public class BookAppointmentFragment extends Fragment {
         HourAdapter hourAdapter = new HourAdapter(getActivity().getApplicationContext(),hourEventList());
         hourListView.setAdapter(hourAdapter);
     }
+//    ArrayList<HourEvent> allHourEventslist;
     private ArrayList<HourEvent> hourEventList() {
-        ArrayList<HourEvent> list=new ArrayList<>();
+        ArrayList<HourEvent> allHourEventslist=new ArrayList<>();
         for(int hour=8;hour<17;hour++){
             LocalTime time= LocalTime.of(hour,0);
             ArrayList<Event> events=Event.eventsForDateAndTime(CalendarUtils.selectedDate,time);
             HourEvent hourEvent=new HourEvent(time,events);
-            list.add(hourEvent);
+            ArrayList<Event> hourEventCheck=hourEvent.getEvents();
+            if(hourEventCheck.size()==0) {
+                allHourEventslist.add(hourEvent);
+            }
         }
-        return list;
+        return allHourEventslist;
     }
 
+    public void get_a_course(Spinner courseSpinner) {
+//        Log.i(ACTIVITY_NAME,"get a year");
+        courseList = Arrays.asList(getResources().getStringArray(R.array.courses_list));
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter( getContext(), android.R.layout.simple_spinner_dropdown_item,courseList);
+        courseSpinner.setAdapter(adapter);
+        courseSpinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView <?> adapterView,
+                                               View view, int i, long l) {
+                        coursePreference=courseList.get(i);
+                    }
+                    @Override
+                    public void onNothingSelected(AdapterView <?> adapterView) {
+                    }
+                });
+    }
 
 }

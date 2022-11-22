@@ -28,7 +28,7 @@
             android:gravity="center"
             android:id="@+id/event1"
             android:textSize="12sp"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:lines="2"
             android:text="Event 1"/>
 
@@ -41,7 +41,7 @@
             android:gravity="center"
             android:id="@+id/event2"
             android:textSize="12sp"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:lines="2"
             android:text="Event 2"/>
 
@@ -54,7 +54,7 @@
             android:gravity="center"
             android:id="@+id/event3"
             android:textSize="12sp"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:lines="2"
             android:text="Event 3"/>
     </LinearLayout>

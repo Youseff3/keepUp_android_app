@@ -7,6 +7,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -15,6 +19,9 @@ import android.view.ViewGroup;
  */
 public class ClassFragment extends Fragment {
     protected static final String FRAGMENT_NAME="ClassFragment";
+    private TextView coursesTV;
+    private Button addCourseBtn,removeCourseBtn;
+    ArrayList<String> coursesList;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -61,6 +68,40 @@ public class ClassFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_class, container, false);
+        View inflatedView=inflater.inflate(R.layout.fragment_class, container, false);
+
+        coursesTV=inflatedView.findViewById(R.id.coursesTV);
+//        if(coursesList.size()==0){
+//            coursesTV.setText("You do not have any classes chosen");
+//        }else{
+//            coursesTV.setText("");
+//            for(String course:coursesList){
+//                coursesTV.append(course+"\n");
+//            }
+//        }
+
+        addCourseBtn=inflatedView.findViewById(R.id.addClassBtn);
+        addCourseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView,AddClassFragment.class,null)
+                        .setReorderingAllowed(true)
+                        .addToBackStack("tempBackStack")
+                        .commit();
+            }
+        });
+        removeCourseBtn=inflatedView.findViewById(R.id.removeClassBtn);
+        removeCourseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView,RemoveClassFragment.class,null)
+                        .setReorderingAllowed(true)
+                        .addToBackStack("tempBackStack")
+                        .commit();
+            }
+        });
+        return inflatedView;
     }
 }
