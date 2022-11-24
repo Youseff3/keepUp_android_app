@@ -39,8 +39,8 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="409dp"
-        android:layout_height="686dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,7 +51,7 @@
             android:id="@+id/fragmentContainerView"
             android:name="com.example.android.ClassFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="647dp" />
 
     </LinearLayout>
 

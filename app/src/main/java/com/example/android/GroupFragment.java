@@ -8,6 +8,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 
 import androidx.annotation.NonNull;
@@ -16,6 +19,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +50,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,8 +65,9 @@ import java.util.ArrayList;
 public class GroupFragment extends Fragment {
     protected static final String FRAGMENT_NAME="GroupFragment";
     protected static int colorIcon[] = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW};
+    private Handler RefreshPage = new Handler();
 
-    private static final int[] memberchip={R.id.Chip1,R.id.Chip2,R.id.Chip3};
+    private static final int[] memberchip={R.id.Chip1,R.id.Chip2,R.id.Chip3, R.id.Chip4};
     private final Chip[] switch_buttons=new Chip[memberchip.length];
     private  Button EmailInstrucorBtn;
     private ViewGroupsAdapter adapter;
@@ -68,20 +75,19 @@ public class GroupFragment extends Fragment {
     private ListView GroupLists;
     private TextView GroupName;
     private View result;
-    //DocumentReference docRef;
     private TextView message;
     private ImageView GroupIcon;
-    private   TextView GroupDescription;
+    private  TextView GroupDescription;
     private   GroupsInformation info;
     private CardView CardGroup;
     private LayoutInflater inflater;
     private  TextView nogroupinfo;
-
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    Runnable RefreshInfoRunnable;
 
     private static class GroupsInformation
     {
-        private  String  id;  //Primary Key
+        private final String  id;  //Primary Key
         private String NameofGroup;
         private String GroupDescription;
 
@@ -98,26 +104,21 @@ public class GroupFragment extends Fragment {
         {
             return this.id;
         }
+        public String getNameofGroup() {return this.NameofGroup;}
+        public String getGroupDescription() {return this.GroupDescription;}
+
+        public void setMembers(ArrayList<String> newmembers){this.members = newmembers;}
+        public void setGroupDescription(String newGroupDesc){this.GroupDescription = newGroupDesc; }
+        public void setGroupName(String newName){this.NameofGroup = newName; }
 
         public ArrayList<String> getMembers() {return this.members;}
 
-        public String getNameofGroup()
-        {
-            return this.NameofGroup;
-        }
-        public String getGroupDescription()
-        {
-            return this.GroupDescription;
-        }
     }
 
-
     private class ViewGroupsAdapter extends ArrayAdapter<String> {
-
         public ViewGroupsAdapter(@NonNull Context context, int resource) {
             super(context, resource);
         }
-
         public int getCount() {
             return groups.size();
         }
@@ -126,11 +127,9 @@ public class GroupFragment extends Fragment {
             return groups.get(position);
         }
 
-        @SuppressLint("ViewHolder")
         public View getView(int position, View convertView, ViewGroup parent) {
             inflater = GroupFragment.this.getLayoutInflater();
             result = inflater.inflate(R.layout.group_list_view, null);
-
             message =  result.findViewById(R.id.GroupNameLabel);
             ImageView deleteButton = result.findViewById(R.id.RemoveGroup);
             ImageView Editbutton = result.findViewById(R.id.EditIcon);
@@ -140,7 +139,6 @@ public class GroupFragment extends Fragment {
 
 
             info  = fetchitem(position);
-
             deleteButton.setTag(position);
             GroupIcon.setTag(position);
             CardGroup.setTag(position);
@@ -178,67 +176,64 @@ public class GroupFragment extends Fragment {
         }
 
     }
-    public void DeleteGroupEntry(View view){
 
-        int positionitemToDelete = (int) view.getTag();
-        GroupsInformation groupdel = groups.get(positionitemToDelete);
-        String GroupName = groups.get(positionitemToDelete).NameofGroup;
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String UserID  = "userID";
+    private static final String username = "username";
 
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
 
-        AlertDialog.Builder builder =
-                new AlertDialog.Builder(this.getContext());
-        builder.setTitle("Are you sure you want to be removed from: " + GroupName);
-        builder.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        groups.remove(positionitemToDelete);
-                        adapter.notifyDataSetChanged();
-                        if (groups.size() == 0 )
-                        {
-                            nogroupinfo.setVisibility(View.VISIBLE);
-                            GroupLists.setVisibility(View.INVISIBLE);
-                        }
-                        Log.i(FRAGMENT_NAME, "This is the user: " + mParam2);
-                        deletefromdatabase(groupdel.id, mParam2 ); //TODO: change mparam2 to username
-                    } });
-        builder.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    } });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-
+    public GroupFragment() {
+        // Required empty public constructor
     }
 
+    public static GroupFragment newInstance(String param1, String param2) {
+        GroupFragment fragment = new GroupFragment();
+        Bundle args = new Bundle();
+        args.putString(UserID, param1);
+        args.putString(username, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
-    /****
-     * Displays Group information
-     */
-    public void DisplayGroupInfo(String name)
-    {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View test=inflater.inflate(R.layout.fragment_group, container, false);
+        GroupLists = test.findViewById(R.id.GroupinformationList);
+        nogroupinfo = test.findViewById(R.id.NoGroupinfo);
 
-       Log.i(FRAGMENT_NAME, "This is the second param: " + name );
-       db.collection("groups").whereArrayContains("members", name) //TODO: change value to username
+        adapter = new ViewGroupsAdapter(this.getContext(), 0 );
+        GroupLists.setAdapter(adapter);
+        nogroupinfo.setText(R.string.NoGroupsPage);
+        nogroupinfo.setVisibility(View.VISIBLE);
+        GroupLists.setVisibility(View.INVISIBLE);
+
+        CardView btn=test.findViewById(R.id.Banner);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView,CreateGroupFragment.class,getArguments())
+                        .setReorderingAllowed(true)
+                        .addToBackStack("tempBackStack")
+                        .commit();
+            }
+        });
+        Log.i(FRAGMENT_NAME, "This is the user ID: " + mParam1 );
+        db.collection("user").whereEqualTo(FieldPath.documentId(), mParam1)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                String groupName = document.getString("name");
-                                String groupDesc = document.getString("description");
-                                Log.i( " Array information for members : ", "  " +  document.get("members") ) ;
-
-                                groups.add(new GroupsInformation(document.getId(), groupName, groupDesc, (ArrayList<String>) document.get("members")));
-                                adapter.notifyDataSetChanged();
-                                if (groups.size()>0 )
-                                {
-                                    GroupLists.setVisibility(View.VISIBLE);
-                                    nogroupinfo.setVisibility(View.INVISIBLE);
-
-
-                                }
+                                mParam2 = document.getString("first_name");
+                                DisplayGroupInfo(mParam2);
                             }
                         } else {
                             Log.w(FRAGMENT_NAME, "Error getting documents.", task.getException());
@@ -247,10 +242,100 @@ public class GroupFragment extends Fragment {
                 });
 
 
+        return test;
+    }
 
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(UserID);
+            mParam2 = getArguments().getString(username);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        groups.clear();
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        DisplayGroupInfo(mParam2);
+
+        // Toast.makeText(getActivity(), "New Change", Toast.LENGTH_SHORT).show();
+
+    }
+
+    /****
+     * queries the database, filtering information based on user registered and adding it to the UI
+     * Refreshes page every 3 seconds for updates from the firebase
+     * @param name of the user that queries the data
+     */
+    public void DisplayGroupInfo(String name)
+    {
+
+           RefreshInfoRunnable = new Runnable() {
+            @Override
+            public void run() {
+                db.collection("groups").whereArrayContains("members", name).orderBy("name")
+                        .get()
+
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful() && groups.size() < task.getResult().size()) {
+                                    for (DocumentChange document : task.getResult().getDocumentChanges()) {
+                                        String groupName = document.getDocument().getString("name");
+                                        String groupDesc = document.getDocument().getString("description");
+                                        Log.i( " Array information for members : ", "  " +  document.getDocument().get("members") ) ;
+                                        groups.add(new GroupsInformation(document.getDocument().getId(), groupName, groupDesc, (ArrayList<String>) document.getDocument().get("members")));
+                                        adapter.notifyDataSetChanged();
+                                        if (groups.size()>0 )
+                                        {
+                                            GroupLists.setVisibility(View.VISIBLE);
+                                            nogroupinfo.setVisibility(View.INVISIBLE);
+
+                                        }
+                                    }
+
+                                    //Toast.makeText(getActivity(), "Page Refreshed ", Toast.LENGTH_LONG).show();
+                                } else {
+                                    Log.w(FRAGMENT_NAME, "Error getting documents or no changes yet.", task.getException());
+                                }
+                            }
+
+                        });
+                Log.i(FRAGMENT_NAME, "This is the second param: " + name );
+                RefreshPage.postDelayed(this, 3000);
+
+            }
+
+        };
+
+        RefreshPage.postDelayed(RefreshInfoRunnable, 3000);
+
+            }
+
+
+
+
+
+    /**
+     * On click handler to display more information about the group information when clicked
+     * @param view
+     */
 
     public void ShowGroupInfo(View view)
     {
@@ -273,21 +358,23 @@ public class GroupFragment extends Fragment {
         TextView GroupDesc = views.findViewById(R.id.ViewGroupDesc);
         TextView Instructor = views.findViewById(R.id.ViewGroupInstructor);
 
-        for (int i =0; i < (group.members.size()); i++)
+        for (int i =0; i < (group.getMembers().size()); i++)
         {
             switch_buttons[i]= views.findViewById(memberchip[i]);
             switch_buttons[i].setVisibility(View.VISIBLE);
-            switch_buttons[i].setText(group.members.get(i));
+            switch_buttons[i].setText(group.getMembers().get(i));
 
         }
 
 
-        GroupName.setText(group.NameofGroup);
-        GroupDesc.setText(group.GroupDescription);
+        GroupName.setText(group.getNameofGroup());
+        GroupDesc.setText(group.getGroupDescription()) ;
+
         Instructor.setText("Instructor: Mawlood-Yunis"); // Todo: Let the firebase query the course instructor data
+
         AlertDialog.Builder customDialog =  new AlertDialog.Builder(this.getContext());
         customDialog.setView(views)
-                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.Close, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
 
@@ -301,6 +388,7 @@ public class GroupFragment extends Fragment {
 
 
     /****
+     * Starts the Email Intent to send an email to the instructor directly
      * TODO: Start Email Intent to email instructor directly, would need instructor email from firebase
      * @param view
      */
@@ -313,7 +401,7 @@ public class GroupFragment extends Fragment {
         if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivity(intent);
         } else {
-            Toast.makeText(getActivity(), "You do not have an app that can send emails",
+            Toast.makeText(getActivity(), R.string.EmailErr,
                     Toast.LENGTH_SHORT).show();
         }
 
@@ -321,15 +409,12 @@ public class GroupFragment extends Fragment {
 
     }
 
-    /***
-     * TODO: Start EmailGroup Intent to email groups directly, would need user email from firebase
+
+    /**
+     * Enables the user to edit their information, either about the group or description of the group
+     * OnClick Handler of the green edit pencil icon gets called by this
      * @param view
      */
-
-    public void EmailGroup(View view )
-    {
-
-    }
 
     public void EditGroups(View view )
     {
@@ -341,11 +426,9 @@ public class GroupFragment extends Fragment {
         int positionitem= (int) view.getTag();
         GroupsInformation group = groups.get(positionitem);
 
-
-
         AlertDialog.Builder customDialog =  new AlertDialog.Builder(this.getContext());
         customDialog.setView(views)
-                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.SaveButtonText, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         boolean changed = false;
@@ -354,16 +437,16 @@ public class GroupFragment extends Fragment {
 
                         if (NewGroupName.getText().toString().compareTo("") != 0 ){
                             changed = true;
-                            group.NameofGroup = NewGroupName.getText().toString();
+                            group.setGroupName(NewGroupName.getText().toString());
                         }
                         if (NewGroupDesc.getText().toString().compareTo("") != 0 ) {
                             changed = true;
-                            group.GroupDescription = NewGroupDesc.getText().toString();
+                            group.setGroupDescription( NewGroupDesc.getText().toString());
                         }
 
                         if(changed) {
                             adapter.notifyDataSetChanged();
-                            updateDatabase(group.getid(), group.NameofGroup, group.GroupDescription);
+                            updateDatabase(group.getid(), group.getNameofGroup(), group.getGroupDescription());
                         }
 
                     }
@@ -376,112 +459,14 @@ public class GroupFragment extends Fragment {
     }
 
 
-
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String UserID  = "userID";
-    private static final String username = "username";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public GroupFragment() {
-        // Required empty public constructor
-    }
-
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Gets called to update the database information once user changes either the group name or the group Description
+     * @param id : The group id key of the new group instance
+     * @param groupname : Name of the new group
+     * @param groupdescription : Description of the group
+     * @return true: If data has been succefully updated
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GroupFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static GroupFragment newInstance(String param1, String param2) {
-        GroupFragment fragment = new GroupFragment();
-        Bundle args = new Bundle();
-        args.putString(UserID, param1);
-        args.putString(username, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(UserID);
-            mParam2 = getArguments().getString(username);
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        groups.clear();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        DisplayGroupInfo(mParam1);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View test=inflater.inflate(R.layout.fragment_group, container, false);
-//        FragmentManager fragmentManager =getSupportFragmentManager();
-
-        GroupLists = test.findViewById(R.id.GroupinformationList);
-        nogroupinfo = test.findViewById(R.id.NoGroupinfo);
-     //  EmailInstrucorBtn = test.findViewById(R.id.EmailInstructorBtn);
-
-        adapter = new ViewGroupsAdapter(this.getContext(), 0 );
-        GroupLists.setAdapter(adapter);
-        nogroupinfo.setText("No groups available! ");
-        nogroupinfo.setVisibility(View.VISIBLE);
-        GroupLists.setVisibility(View.INVISIBLE);
-
-
-
-
-        CardView btn=test.findViewById(R.id.Banner);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainerView,CreateGroupFragment.class,getArguments())
-                        .setReorderingAllowed(true)
-                        .addToBackStack("tempBackStack")
-                        .commit();
-            }
-        });
-
-        db.collection("user").whereEqualTo(FieldPath.documentId(), mParam1)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                mParam1 = document.getString("first_name");
-                                DisplayGroupInfo(mParam1);
-                            }
-                        } else {
-                            Log.w(FRAGMENT_NAME, "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-
-
-        return test;
-    }
-
     public boolean updateDatabase(String id, String groupname, String groupdescription)
     {
         Log.i(FRAGMENT_NAME, "Message id: " + id);
@@ -518,18 +503,71 @@ public class GroupFragment extends Fragment {
                 });
         return true;
     }
-    public void deletefromdatabase(String groupid, String username)
-    {
-        DocumentReference groupsRef = db.collection("groups").document(groupid);
-        Log.i(FRAGMENT_NAME, "Group id " + groupid + " username " + username);
-         groupsRef.update("members", FieldValue.arrayRemove(mParam1));
+    /***
+     * On Click Handler for delete button icon, gets called when user wants to remove themselves from the group
+     * Updates the arrayList and notifys data has been changed, calls the delete database fuction to notify
+     * of item being deleted to the firebase
+     * @param view
+     */
+    public void DeleteGroupEntry(View view){
+
+        int positionitemToDelete = (int) view.getTag();
+        GroupsInformation groupdel = groups.get(positionitemToDelete);
+        String GroupName = groups.get(positionitemToDelete).getNameofGroup();
 
 
-        /***
-         * TODO before submission: Check if the group has only one member, delete the document if so
-         */
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(this.getContext());
+
+        builder.setTitle("Are you sure you want to be removed from:" +  GroupName);
+        builder.setPositiveButton(R.string.Yes,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        groups.remove(positionitemToDelete);
+                        adapter.notifyDataSetChanged();
+                        if (groups.size() == 0 )
+                        {
+                            nogroupinfo.setVisibility(View.VISIBLE);
+                            GroupLists.setVisibility(View.INVISIBLE);
+                        }
+                        Log.i(FRAGMENT_NAME, "This is the user: " + mParam2);
+                        deletefromdatabase(groupdel.getid(), mParam2 ); //TODO: change mparam2 to username
+                    } });
+        builder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    } });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
     }
 
 
+    /***
+     * Removes the user from the group.
+     * @param groupid : Instance id of the group
+     * @param username : Name of the user who wants to be removed
+     */
+    public void deletefromdatabase(String groupid, String username)
+    {
+        RefreshPage.removeCallbacks(RefreshInfoRunnable); // Pause in order to delete info and do other operations
+        DocumentReference groupsRef = db.collection("groups").document(groupid);
+        Log.i(FRAGMENT_NAME, "Group id " + groupid + " username " + username);
+        groupsRef.update("members", FieldValue.arrayRemove(username));
+         RefreshInfoRunnable.run(); // Run timer again
+
+
+        /***
+         * TODO before final submission: Check if the group has only one member, delete the document if so
+         */
+    }
+    private void PrintSnackbar(String message, int color, int duration)
+    {
+        Snackbar snackbar = Snackbar.make(this.getActivity().findViewById(R.id.linearLayout), message, duration)
+                .setAction("Action", null);
+        View snackview = snackbar.getView();
+        snackview.setBackgroundColor(color);
+        snackbar.show();
+    }
 
 }

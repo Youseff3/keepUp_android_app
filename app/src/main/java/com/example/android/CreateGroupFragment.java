@@ -63,12 +63,12 @@ public class CreateGroupFragment extends Fragment {
     protected EditText GroupDescInput;
 
     protected static RecyclerViewAdapter_AddStudent addstudentadapter;
-    protected ArrayAdapter<CharSequence> adapter;
+    protected static ArrayAdapter<CharSequence> adapter;
     protected  ArrayAdapter<CharSequence> adapter2;
     protected RecyclerView StudentList;
     public static  ArrayList<String> user = new ArrayList<String >();
     public ArrayList<String> courses = new ArrayList<>();
-    public ArrayList<String> students = new ArrayList<>();
+    public static ArrayList<String> students = new ArrayList<>();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -223,6 +223,8 @@ public class CreateGroupFragment extends Fragment {
                 String selected_item = StudentSpinner.getItemAtPosition(spinner_position).toString();
                 Log.i(FRAGMENT_NAME, selected_item);
                 user.add(selected_item);
+                students.remove(StudentSpinner.getSelectedItemPosition());
+                adapter.notifyDataSetChanged();
                 addstudentadapter.notifyDataSetChanged();
 
 
@@ -239,14 +241,13 @@ public class CreateGroupFragment extends Fragment {
     public void SaveForm(View view){
 
         if (!ValidateForm()) {
-            String message = "Err: Form is invalid, please make sure all fields are completed";
-            PrintSnackbar(message, Color.RED, Snackbar.LENGTH_LONG);
+            PrintSnackbar( R.string.FormErr, Color.RED, Snackbar.LENGTH_LONG);
         }
         else {
             WriteToDatabase();
         }
     }
-    private void PrintSnackbar(String message, int color, int duration)
+    private void PrintSnackbar(int message, int color, int duration)
     {
         Snackbar snackbar = Snackbar.make(this.getActivity().findViewById(R.id.linearLayout), message, duration)
                 .setAction("Action", null);
@@ -258,7 +259,7 @@ public class CreateGroupFragment extends Fragment {
         if (CourseSpinner.getSelectedItemPosition() != 0 )
             if (!(GroupNameInput.getText().toString().compareTo("")==0) )
                 if (!(GroupDescInput.getText().toString().compareTo("") == 0))
-                    return user.size() > 0;
+                    return user.size() > 1;
 
         return false;
     }
@@ -272,8 +273,11 @@ public class CreateGroupFragment extends Fragment {
 
         while(!removed && i< user.size()) {
             if (user.get(i).compareTo(elementDelete.getText().toString()) == 0 && i!=0) {
+                students.add(user.get(i));
                 user.remove(i);
+
                 removed = true;
+                adapter.notifyDataSetChanged();
                 addstudentadapter.notifyItemRemoved(i);
                 addstudentadapter.notifyItemRangeChanged(i, user.size() - i);
 

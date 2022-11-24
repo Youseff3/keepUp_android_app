@@ -65,13 +65,18 @@
     <string name="forward"> -&gt; </string>
     <string name="backward"> &lt;- </string>
 
-    <string-array name="sudent_list">
-        <item> None </item>
-        <item> Carson Aziz</item>
-        <item> MaytheHateGuideYou</item>
-        <item> ThePharoah</item>
-        <item> Phis </item>
-    </string-array>
+    <!--  Create Groups Strings.xml uses -->
 
     <string name="BannerRegistrationPage"> Groups registration page</string>
+    <string name= "FormErr"> Err: Form is invalid, please make sure all fields are completed</string>
+    <!--  Create Groups String.xml  end  -->
+
+    <!--  Groups Fragment Strings.xml uses -->
+    <string name="Close"> Close </string>
+    <string name = "EmailErr">You do not have an app that can send emails </string>
+    <string name = "SaveButtonText"> Save </string>
+    <string name = "ConfirmGroupReButton"> Are you sure you want to be removed from </string>
+    <string name = "Yes"> Yes</string>
+    <string name="NoGroupsPage"> No groups available! </string>
+    <!--  Groups Fragment Strings.xml end  -->
 </resources>

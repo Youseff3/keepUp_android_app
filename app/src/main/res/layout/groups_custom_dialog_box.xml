@@ -11,7 +11,6 @@
     android:layout_gravity="center"
     android:layout_margin="20dp"
     android:padding="20dp"
-    app:strokeColor="#808080"
     app:strokeWidth="@dimen/cardview_default_radius"
 
     >
@@ -124,6 +123,14 @@
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/Chip3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Third User"
+
+                    android:visibility="invisible" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/Chip4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Third User"
