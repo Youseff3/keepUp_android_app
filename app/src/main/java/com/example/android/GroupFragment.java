@@ -177,12 +177,10 @@ public class GroupFragment extends Fragment {
 
     }
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String UserID  = "userID";
     private static final String username = "username";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -259,19 +257,31 @@ public class GroupFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        Log.i(FRAGMENT_NAME, "In OnStop");
         groups.clear();
+        RefreshPage.removeCallbacks(RefreshInfoRunnable); // Shouldnt need to request when page is not active
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i(FRAGMENT_NAME, "In onPause");
 
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        RefreshPage.removeCallbacks(RefreshInfoRunnable); // Remove callbacks here
+
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        groups.clear();
         DisplayGroupInfo(mParam2);
 
         // Toast.makeText(getActivity(), "New Change", Toast.LENGTH_SHORT).show();
@@ -291,7 +301,6 @@ public class GroupFragment extends Fragment {
             public void run() {
                 db.collection("groups").whereArrayContains("members", name).orderBy("name")
                         .get()
-
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -317,14 +326,14 @@ public class GroupFragment extends Fragment {
                             }
 
                         });
-                Log.i(FRAGMENT_NAME, "This is the second param: " + name );
-                RefreshPage.postDelayed(this, 3000);
+               // Log.i(FRAGMENT_NAME, "This is the second param: " + name );
+                RefreshPage.postDelayed(this, 1000);
 
             }
 
         };
 
-        RefreshPage.postDelayed(RefreshInfoRunnable, 3000);
+        RefreshPage.postDelayed(RefreshInfoRunnable, 1000);
 
             }
 
@@ -561,6 +570,13 @@ public class GroupFragment extends Fragment {
          * TODO before final submission: Check if the group has only one member, delete the document if so
          */
     }
+
+    /**
+     * Debugging functionality for Snackbar
+     * @param message message to display
+     * @param color   color of the snackbar
+     * @param duration duration of the time it takes to display
+     */
     private void PrintSnackbar(String message, int color, int duration)
     {
         Snackbar snackbar = Snackbar.make(this.getActivity().findViewById(R.id.linearLayout), message, duration)

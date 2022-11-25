@@ -51,11 +51,6 @@
         <item>400 Level</item>
     </string-array>
 
-    <string-array name="courses_list">
-        <item>None</item>
-        <item>CP470</item>
-        <item>CP468</item>
-    </string-array>
 
     <string name="proceed_button">Create Account</string>
     <string name="course_selection_button">Course Selection</string>
@@ -79,4 +74,23 @@
     <string name = "Yes"> Yes</string>
     <string name="NoGroupsPage"> No groups available! </string>
     <!--  Groups Fragment Strings.xml end  -->
+
+
+    <!-- Menu items Strings.xml Start -->
+    <string name="feedback"> Leave Feedback on app</string>
+    <string name="GroupsParagraph">The groups feature is the hub of where you can interact with other students in the same class as you. This can allow you to add fellow students across classes, organize you group and email your instructor or other group members.
+To get started you can click on the create a group button, this will take you to a user form to fill out all relevant information.
+        Once a group has been created, you can either edit your group, remove yourself from the group or check out more details by clicking on the group.
+
+    Feel free to explore around the Groups Feature!</string>
+    <!-- Menu items Strings.xml End  -->
+
+    <!-- Main Activity Strings.xml Start -->
+    <string name="Groups"> Groups</string>
+    <string name="Appointments"> Appointments</string>
+    <string name="Classes"> Classes</string>
+    <!-- Main Activity Strings.xml End -->
+
+
+
 </resources>
