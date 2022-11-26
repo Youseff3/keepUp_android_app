@@ -52,7 +52,6 @@ import java.util.Map;
 public class CreateGroupFragment extends Fragment {
 
     protected static final String FRAGMENT_NAME="CreateGroupFragment";
-    //String first_name;
     protected FirebaseFirestore db = FirebaseFirestore.getInstance();
     protected static final int MAXIMUM = 4;
     protected Spinner StudentSpinner;

@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".GroupFragment"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:id="@+id/GroupPage">
 
     <TextView
         android:layout_width="match_parent"
@@ -18,21 +19,23 @@
         app:layout_constraintTop_toTopOf="parent"
         android:gravity="center"
         android:textStyle="bold"
-        android:textSize="30sp"
+        android:textSize="20sp"
+        android:layout_margin="5dp"
         />
 
 
     <androidx.cardview.widget.CardView
         android:id="@+id/Banner"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_width="314dp"
+        android:layout_height="53dp"
         android:layout_gravity="center"
         android:layout_margin="10dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="28dp"
         app:cardBackgroundColor="@color/purple_700"
         app:cardCornerRadius="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.164"
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
@@ -73,7 +76,16 @@
 
     </ListView>
 
-
+    <ImageView
+        android:id="@+id/refresh"
+        android:layout_width="35dp"
+        android:layout_height="37dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/refresh"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.384"
+        app:layout_constraintStart_toEndOf="@+id/Banner" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

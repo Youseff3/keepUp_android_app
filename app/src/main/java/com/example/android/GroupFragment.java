@@ -23,6 +23,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -65,7 +66,6 @@ import java.util.Map;
 public class GroupFragment extends Fragment {
     protected static final String FRAGMENT_NAME="GroupFragment";
     protected static int colorIcon[] = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW};
-    private Handler RefreshPage = new Handler();
 
     private static final int[] memberchip={R.id.Chip1,R.id.Chip2,R.id.Chip3, R.id.Chip4};
     private final Chip[] switch_buttons=new Chip[memberchip.length];
@@ -83,7 +83,8 @@ public class GroupFragment extends Fragment {
     private LayoutInflater inflater;
     private  TextView nogroupinfo;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    Runnable RefreshInfoRunnable;
+    private  ImageView refresh;
+
 
     private static class GroupsInformation
     {
@@ -138,6 +139,7 @@ public class GroupFragment extends Fragment {
             CardGroup = result.findViewById(R.id.CardGroup);
 
 
+
             info  = fetchitem(position);
             deleteButton.setTag(position);
             GroupIcon.setTag(position);
@@ -172,6 +174,8 @@ public class GroupFragment extends Fragment {
                 }
             });
 
+
+
             return result;
         }
 
@@ -204,6 +208,7 @@ public class GroupFragment extends Fragment {
         View test=inflater.inflate(R.layout.fragment_group, container, false);
         GroupLists = test.findViewById(R.id.GroupinformationList);
         nogroupinfo = test.findViewById(R.id.NoGroupinfo);
+        refresh = test.findViewById(R.id.refresh);
 
         adapter = new ViewGroupsAdapter(this.getContext(), 0 );
         GroupLists.setAdapter(adapter);
@@ -220,6 +225,12 @@ public class GroupFragment extends Fragment {
                         .setReorderingAllowed(true)
                         .addToBackStack("tempBackStack")
                         .commit();
+            }
+        });
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RefreshPage(view);
             }
         });
         Log.i(FRAGMENT_NAME, "This is the user ID: " + mParam1 );
@@ -259,7 +270,6 @@ public class GroupFragment extends Fragment {
         super.onStop();
         Log.i(FRAGMENT_NAME, "In OnStop");
         groups.clear();
-        RefreshPage.removeCallbacks(RefreshInfoRunnable); // Shouldnt need to request when page is not active
 
     }
 
@@ -273,7 +283,6 @@ public class GroupFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RefreshPage.removeCallbacks(RefreshInfoRunnable); // Remove callbacks here
 
 
     }
@@ -296,15 +305,14 @@ public class GroupFragment extends Fragment {
     public void DisplayGroupInfo(String name)
     {
 
-           RefreshInfoRunnable = new Runnable() {
-            @Override
-            public void run() {
                 db.collection("groups").whereArrayContains("members", name).orderBy("name")
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful() && groups.size() < task.getResult().size()) {
+                                if (task.isSuccessful() && (groups.size() -  task.getResult().size() !=0)) {
+                                    groups.clear();
+
                                     for (DocumentChange document : task.getResult().getDocumentChanges()) {
                                         String groupName = document.getDocument().getString("name");
                                         String groupDesc = document.getDocument().getString("description");
@@ -327,15 +335,13 @@ public class GroupFragment extends Fragment {
 
                         });
                // Log.i(FRAGMENT_NAME, "This is the second param: " + name );
-                RefreshPage.postDelayed(this, 1000);
 
             }
 
-        };
 
-        RefreshPage.postDelayed(RefreshInfoRunnable, 1000);
 
-            }
+
+
 
 
 
@@ -559,16 +565,26 @@ public class GroupFragment extends Fragment {
      */
     public void deletefromdatabase(String groupid, String username)
     {
-        RefreshPage.removeCallbacks(RefreshInfoRunnable); // Pause in order to delete info and do other operations
         DocumentReference groupsRef = db.collection("groups").document(groupid);
         Log.i(FRAGMENT_NAME, "Group id " + groupid + " username " + username);
         groupsRef.update("members", FieldValue.arrayRemove(username));
-         RefreshInfoRunnable.run(); // Run timer again
 
 
         /***
          * TODO before final submission: Check if the group has only one member, delete the document if so
          */
+    }
+
+
+
+    /**
+     * Refreshes the page when clicked
+     */
+
+    public void RefreshPage(View view)
+    {
+        Toast.makeText(getActivity(), "Page refreshed ", Toast.LENGTH_SHORT).show();
+        DisplayGroupInfo(mParam2);
     }
 
     /**
