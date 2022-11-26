@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
 //        Log.i(ACTIVITY_NAME,String.valueOf(coursePref));
 
         FragmentManager fragmentManager =getSupportFragmentManager();
+
         classButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,19 +111,6 @@ public class MainActivity extends AppCompatActivity {
                 appointmentButton.setBackgroundColor(getResources().getColor(R.color.purple_500));
                 fragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainerView,ClassFragment.class,extras)
-                        .setReorderingAllowed(true)
-                        .addToBackStack("tempBackStack")
-                        .commit();
-            }
-        });
-        groupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                classButton.setBackgroundColor(getResources().getColor(R.color.purple_500));
-                groupButton.setBackgroundColor(Color.GREEN);
-                appointmentButton.setBackgroundColor(getResources().getColor(R.color.purple_500));
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainerView,GroupFragment.class,extras)
                         .setReorderingAllowed(true)
                         .addToBackStack("tempBackStack")
                         .commit();
@@ -141,6 +129,21 @@ public class MainActivity extends AppCompatActivity {
                         .commit();
             }
         });
+
+        groupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                classButton.setBackgroundColor(getResources().getColor(R.color.purple_500));
+                groupButton.setBackgroundColor(Color.GREEN);
+                appointmentButton.setBackgroundColor(getResources().getColor(R.color.purple_500));
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView,GroupFragment.class,extras)
+                        .setReorderingAllowed(true)
+                        .addToBackStack("tempBackStack")
+                        .commit();
+            }
+        });
+
     }
 
     public void newEventAction(View view)

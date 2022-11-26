@@ -122,7 +122,7 @@ public class CreateGroupFragment extends Fragment {
         AddButton = inflated_view.findViewById(R.id.AddButton);
         StudentList = inflated_view.findViewById(R.id.UsersAdd);
         addstudentadapter = new RecyclerViewAdapter_AddStudent(this.getContext(),user );
-        ProgressIndicator = inflated_view.findViewById(R.id.ProgressIndicator);
+//        ProgressIndicator = inflated_view.findViewById(R.id.ProgressIndicator);
         GroupNameInput = inflated_view.findViewById(R.id.TextGroupName);
         GroupDescInput = inflated_view.findViewById(R.id.GroupDescInput);
 
@@ -137,7 +137,7 @@ public class CreateGroupFragment extends Fragment {
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         CourseSpinner.setAdapter(adapter2);
 
-        ProgressIndicator.setIndeterminate(false);
+//        ProgressIndicator.setIndeterminate(false);
 
         StudentList.setAdapter(addstudentadapter);
         StudentList.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -294,7 +294,7 @@ public class CreateGroupFragment extends Fragment {
         group.put("description", GroupDescInput.getText().toString());
         group.put("name", GroupNameInput.getText().toString());
         group.put("members", user);
-        ProgressIndicator.setProgressCompat(50, true);
+      //  ProgressIndicator.setProgressCompat(50, true);
 
 
         db.collection("groups")
@@ -303,7 +303,7 @@ public class CreateGroupFragment extends Fragment {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(FRAGMENT_NAME, "DocumentSnapshot added with ID: " + documentReference.getId());
-                        ProgressIndicator.setProgressCompat(100, true);
+                        //ProgressIndicator.setProgressCompat(100, true);
 
 
                     }
