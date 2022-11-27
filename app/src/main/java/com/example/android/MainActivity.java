@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.widget.Button;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     String termPref;
     ArrayList<String> coursePref;
     ArrayList<String> levelPref;
+   public static String UserId;
     Button classButton;
     Button groupButton;
     Button appointmentButton;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
+        classButton.performClick(); // Might need to change, this actually loads the first fragment and pases the Bundle info
 
         return true;
     }
@@ -50,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.help:
                 showHelp();
                 return true;
+            case R.id.Signout:
+                SignUserOut();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -75,17 +80,24 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    public void SignUserOut()
+    {
+        startActivity(new Intent(this, LoginActivity.class));// TODO: Might need to actually ask firebase to do this
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        }
         setContentView(R.layout.activity_main);
         Bundle extras=getIntent().getExtras();
+        //UserId= extras.getString("userId");
         appointmentButton=findViewById(R.id.schedule_button);
         classButton=findViewById(R.id.class_button);
         groupButton=findViewById(R.id.groups_button);
         classButton.setBackgroundColor(Color.GREEN);
-
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -109,9 +121,9 @@ public class MainActivity extends AppCompatActivity {
                 classButton.setBackgroundColor(Color.GREEN);
                 groupButton.setBackgroundColor(getResources().getColor(R.color.purple_500));
                 appointmentButton.setBackgroundColor(getResources().getColor(R.color.purple_500));
+
                 fragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainerView,ClassFragment.class,extras)
-                        .setReorderingAllowed(true)
                         .addToBackStack("tempBackStack")
                         .commit();
             }
@@ -122,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 classButton.setBackgroundColor(getResources().getColor(R.color.purple_500));
                 groupButton.setBackgroundColor(getResources().getColor(R.color.purple_500));
                 appointmentButton.setBackgroundColor(Color.GREEN);
+
                 fragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainerView,AppointmentFragment.class,null)
                         .setReorderingAllowed(true)
@@ -151,5 +164,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, EventLayoutActivity.class));
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

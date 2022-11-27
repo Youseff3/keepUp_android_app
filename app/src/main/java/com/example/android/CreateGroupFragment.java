@@ -175,9 +175,9 @@ public class CreateGroupFragment extends Fragment {
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
-                                        String first_name = (String) document.get("first_name");
-                                        if (first_name.compareTo(user.get(0)) != 0 ) {
-                                            students.add(first_name);
+                                        String name = (String) document.get("first_name") + " " + document.getString("last_name");
+                                        if (name.compareTo(user.get(0)) != 0 ) {
+                                            students.add(name);
                                         }
                                         adapter.notifyDataSetChanged();
 
@@ -290,7 +290,7 @@ public class CreateGroupFragment extends Fragment {
 
 
         Map<String, Object> group = new HashMap<>();
-        group.put("course", CourseSpinner.getSelectedItemPosition());
+        group.put("course", courses.get(CourseSpinner.getSelectedItemPosition()));
         group.put("description", GroupDescInput.getText().toString());
         group.put("name", GroupNameInput.getText().toString());
         group.put("members", user);
@@ -304,7 +304,6 @@ public class CreateGroupFragment extends Fragment {
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(FRAGMENT_NAME, "DocumentSnapshot added with ID: " + documentReference.getId());
                         //ProgressIndicator.setProgressCompat(100, true);
-
 
                     }
                 })
@@ -336,7 +335,7 @@ public class CreateGroupFragment extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        user.add ( (String) document.get("first_name") ) ;
+                        user.add ( (String) document.getString("first_name") + " " + document.getString("last_name")) ;
                         addstudentadapter.notifyItemInserted(user.size());
                         Log.i(FRAGMENT_NAME, "Courses : " + document.get("courses"));
 

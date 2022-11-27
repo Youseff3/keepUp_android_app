@@ -91,16 +91,21 @@ public class GroupFragment extends Fragment {
         private final String  id;  //Primary Key
         private String NameofGroup;
         private String GroupDescription;
+        private  String coursename ;
 
         public  ArrayList<String> members;
 
-        private GroupsInformation(String id , String NameofGroup, String GroupDescription, ArrayList<String> members) {
+        private GroupsInformation(String id , String NameofGroup, String GroupDescription,String coursename, ArrayList<String> members) {
             this.id = id;
             this.NameofGroup = NameofGroup ;
             this.GroupDescription =GroupDescription;
+            this.coursename = coursename;
             this.members = members;
 
+
         }
+
+        public String getCoursename() {return  this.coursename;}
         public String  getid()
         {
             return this.id;
@@ -241,7 +246,7 @@ public class GroupFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                mParam2 = document.getString("first_name");
+                                mParam2 = document.getString("first_name") + " " + document.getString("last_name");
                                 DisplayGroupInfo(mParam2);
                             }
                         } else {
@@ -316,8 +321,9 @@ public class GroupFragment extends Fragment {
                                     for (DocumentChange document : task.getResult().getDocumentChanges()) {
                                         String groupName = document.getDocument().getString("name");
                                         String groupDesc = document.getDocument().getString("description");
+                                        String courseName = document.getDocument().getString("course");
                                         Log.i( " Array information for members : ", "  " +  document.getDocument().get("members") ) ;
-                                        groups.add(new GroupsInformation(document.getDocument().getId(), groupName, groupDesc, (ArrayList<String>) document.getDocument().get("members")));
+                                        groups.add(new GroupsInformation(document.getDocument().getId(), groupName, groupDesc, courseName, (ArrayList<String>) document.getDocument().get("members")));
                                         adapter.notifyDataSetChanged();
                                         if (groups.size()>0 )
                                         {
@@ -371,7 +377,7 @@ public class GroupFragment extends Fragment {
         GroupsInformation group = groups.get(positionitem);
         GroupName = views.findViewById(R.id.ViewGroupName);
         TextView GroupDesc = views.findViewById(R.id.ViewGroupDesc);
-        TextView Instructor = views.findViewById(R.id.ViewGroupInstructor);
+        TextView CourseName  = views.findViewById(R.id.ViewGroupInstructor);
 
         for (int i =0; i < (group.getMembers().size()); i++)
         {
@@ -385,7 +391,7 @@ public class GroupFragment extends Fragment {
         GroupName.setText(group.getNameofGroup());
         GroupDesc.setText(group.getGroupDescription()) ;
 
-        Instructor.setText("Instructor: Mawlood-Yunis"); // Todo: Let the firebase query the course instructor data
+        CourseName.setText(group.getCoursename());
 
         AlertDialog.Builder customDialog =  new AlertDialog.Builder(this.getContext());
         customDialog.setView(views)
@@ -410,6 +416,7 @@ public class GroupFragment extends Fragment {
     public void EmailInstructor(View view)
     {
         Intent intent = new Intent(Intent.ACTION_SEND);
+
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"ibra5690@mylaurier.ca"});
         intent.putExtra(Intent.EXTRA_SUBJECT, "Email from "+ GroupName.getText());
         intent.setData(Uri.parse("mailto:"));

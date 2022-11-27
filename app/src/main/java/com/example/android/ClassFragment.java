@@ -140,6 +140,8 @@ public class ClassFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        Studentclass.clear();
         View test=inflater.inflate(R.layout.fragment_group, container, false);
         Classlist= test.findViewById(R.id.GroupinformationList);
         TextView nogroupinfo = test.findViewById(R.id.NoGroupinfo);
@@ -163,22 +165,22 @@ public class ClassFragment extends Fragment {
         });
 
         Log.i(FRAGMENT_NAME, "This is the param "+ mParam1);
-
-        db.collection("user").whereEqualTo(FieldPath.documentId(), "bcb2SnD4BuS7NhVKHjgo7djiheV2")  // ERR; Main activity is not passing the dat
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                DisplayRegClasses((ArrayList<String>) document.get("courses"));
-                            }
-                        } else {
-                            Log.w(FRAGMENT_NAME, "Error getting documents.", task.getException());
+if (mParam1!=null) {
+    db.collection("user").whereEqualTo(FieldPath.documentId(), mParam1)  // ERR; Main activity is not passing the dat
+            .get()
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            DisplayRegClasses((ArrayList<String>) document.get("courses"));
                         }
+                    } else {
+                        Log.w(FRAGMENT_NAME, "Error getting documents.", task.getException());
                     }
-                });
-
+                }
+            });
+}
 
         return test;
     }
