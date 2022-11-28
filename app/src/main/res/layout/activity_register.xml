@@ -1,96 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp"
-    tools:context=".RegisterActivity">
+    android:layout_height="match_parent"
+
+    >
+
 
     <TextView
-        android:id="@+id/firstNametextview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/firstName_register_form">
-    </TextView>
-
-    <EditText
-        android:id="@+id/firstNametext"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:inputType="textEmailAddress"
-        android:hint="@string/firstName_register_form_hint"
-        ></EditText>
-
-    <TextView
-        android:id="@+id/lastNametextview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/lastName_register_form">
-    </TextView>
-
-    <EditText
-        android:id="@+id/lastNametext"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:inputType="textEmailAddress"
-        android:hint="@string/lastName_register_form_hint"
-        ></EditText>
-
-    <TextView
-        android:id="@+id/emailtextview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/email_register_form">
-    </TextView>
-
-    <EditText
-        android:id="@+id/emailtext"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:inputType="textEmailAddress"
-        android:hint="@string/email_register_form_hint"
-        ></EditText>
-
-    <TextView
-        android:id="@+id/regPasswordtextview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/password_login_form">
-    </TextView>
-
-    <EditText
-        android:id="@+id/regPasswordtext"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:inputType="textPassword"
-
-        ></EditText>
-
-    <TextView
-        android:id="@+id/passwordConfirmationtextview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/password_confirmation_register_form">
-    </TextView>
-
-    <EditText
-        android:id="@+id/passwordConfirmationtext"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:inputType="textPassword"
-
-        ></EditText>
-
-    <Button
-        android:id="@+id/registerButton"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/register_button_text"
-        android:onClick="registerAction"
-        ></Button>
+        android:text="@string/banner_registration_page"
+        android:textAllCaps="true"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textColor="@color/purple_700"/>
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".RegisterActivity">
+
+        <TextView
+            android:id="@+id/firstNametextview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/firstName_register_form"></TextView>
+
+        <EditText
+            android:id="@+id/firstNametext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/firstName_register_form_hint"
+            android:inputType="textEmailAddress"
+            tools:ignore="TouchTargetSizeCheck"></EditText>
+
+        <TextView
+            android:id="@+id/lastNametextview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/lastName_register_form"></TextView>
+
+        <EditText
+            android:id="@+id/lastNametext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/lastName_register_form_hint"
+            android:inputType="textEmailAddress"></EditText>
+
+        <TextView
+            android:id="@+id/emailtextview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/email_register_form"></TextView>
+
+        <EditText
+            android:id="@+id/emailtext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/email_register_form_hint"
+            android:inputType="textEmailAddress"></EditText>
+
+        <TextView
+            android:id="@+id/regPasswordtextview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/password_login_form"></TextView>
+
+        <EditText
+            android:id="@+id/regPasswordtext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textPassword"
+
+            ></EditText>
+
+        <TextView
+            android:id="@+id/passwordConfirmationtextview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/password_confirmation_register_form"></TextView>
+
+        <EditText
+            android:id="@+id/passwordConfirmationtext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textPassword"
+
+            ></EditText>
+
+        <Button
+            android:id="@+id/registerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="registerAction"
+            android:text="@string/register_button_text"></Button>
 
 
-</LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

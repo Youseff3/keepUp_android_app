@@ -1,6 +1,7 @@
 package com.example.android;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -20,6 +21,9 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoginActivity extends AppCompatActivity {
     protected static final String ACTIVITY_NAME="LoginActivity";
     private FirebaseAuth mAuth;
+    private  EditText usernameET;
+    private  EditText passwordET;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         Log.i(ACTIVITY_NAME,"In OnCreate()");
+        usernameET = (EditText) findViewById(R.id.usernametext);
+        passwordET=(EditText) findViewById(R.id.passwordtext);
     }
 
     @Override
@@ -47,44 +53,84 @@ public class LoginActivity extends AppCompatActivity {
 //    }
 
     public void logInAction(View view){
-        EditText usernameET = (EditText) findViewById(R.id.usernametext);
+        usernameET = (EditText) findViewById(R.id.usernametext);
         String email = usernameET.getText().toString();
         EditText passwordET=(EditText) findViewById(R.id.passwordtext);
         String password = passwordET.getText().toString();
+
+
         //need to check if user exists in database
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(ACTIVITY_NAME, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            String userID = user.getUid();
-                            updateUI(user, userID);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(ACTIVITY_NAME, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+
+        if (email.compareTo("") == 0 || password.compareTo("") == 0 )
+        {
+            usernameET.setError("Please ensure all forms are completed ");
+        }
+        else {
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d(ACTIVITY_NAME, "signInWithEmail:success");
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                String userID = user.getUid();
+                                updateUI(user, userID);
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w(ACTIVITY_NAME, "signInWithEmail:failure", task.getException());
+
+                                Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+        }
     }
 
     private void updateUI(FirebaseUser user, String userID) {
 
         Intent intent=new Intent(LoginActivity.this,MainActivity.class);
         intent.putExtra("userID", userID);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
+
     }
+
 
     public void goToRegisterActivity(View view){
         Intent intent=new Intent(LoginActivity.this,RegisterActivity.class);
         startActivity(intent);
     }
 
-//    public Boolean validate(String username,String password){
+
+
+    public void ForgotPassword(View view)
+    {
+
+        String emailAddress = usernameET.getText().toString();
+        Log.i(ACTIVITY_NAME, "Email add: " + emailAddress);
+
+        if (emailAddress.compareTo("") != 0 ) {
+            mAuth.sendPasswordResetEmail(emailAddress)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.i(ACTIVITY_NAME, "Email sent.");
+                                Toast.makeText(LoginActivity.this, "Email Sent!", Toast.LENGTH_SHORT).show();
+                                passwordET.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    });
+        }
+        else
+        {
+
+            passwordET.setVisibility(View.INVISIBLE);
+            Toast.makeText(this, "Please enter an email address and click forgot password", Toast.LENGTH_LONG).show();
+        }
+    }
+    //    public Boolean validate(String username,String password){
 //        if (TextUtils.isEmpty(password)){
 //            Toast.makeText(LoginActivity.this,R.string.psswrd_error_message, Toast.LENGTH_SHORT).show();
 //            return false;

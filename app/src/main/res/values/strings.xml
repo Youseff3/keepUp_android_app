@@ -4,13 +4,14 @@
     <string name="title_activity_login">LoginActivity</string>
 
     <!--Login form strings-->
-    <string name="username_login_form">Username</string>
+    <string name="username_login_form">Email</string>
     <string name="password_login_form">Password</string>
-    <string name="username_login_form_hint">login name</string>
+    <string name="username_login_form_hint">login email</string>
     <string name="login_button_text">Sign In</string>
     <string name="go_to_register">Create a new account</string>
 
     <!--Login and Registration form error messages-->
+    <string name="banner_registration_page">Registration Page</string>
     <string name="psswrd_error_message">Please enter your password!</string>
     <string name="email_error_message">Please enter a valid email address!</string>
     <string name="regEx_psswrd_error_message">The password must be at least 8 characters and must include one digit, one lowercase character, one uppercase character, one special character, and one special character(!@#$%&amp;*()-+=^). No white spaces are allowed.</string>
@@ -62,7 +63,7 @@
 
     <!--  Create Groups Strings.xml uses -->
 
-    <string name="BannerRegistrationPage"> Groups registration page</string>
+    <string name="BannerRegistrationPage"> Groups Registration Page</string>
     <string name= "FormErr"> Err: Form is invalid, please make sure all fields are completed</string>
     <!--  Create Groups String.xml  end  -->
 

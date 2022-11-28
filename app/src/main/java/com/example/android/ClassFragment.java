@@ -150,6 +150,7 @@ public class ClassFragment extends Fragment {
         adapter = new ViewClassAdpater(this.getContext(), 0);
         Classlist.setAdapter(adapter);
         nogroupinfo.setText(R.string.noClassAdded);
+        nogroupinfo.setVisibility(View.INVISIBLE);
         Classlist.setVisibility(View.VISIBLE);
 
         CardView btn=test.findViewById(R.id.Banner);
