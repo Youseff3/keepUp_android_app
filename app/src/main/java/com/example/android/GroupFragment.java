@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -69,7 +70,7 @@ public class GroupFragment extends Fragment {
 
     private static final int[] memberchip={R.id.Chip1,R.id.Chip2,R.id.Chip3, R.id.Chip4};
     private final Chip[] switch_buttons=new Chip[memberchip.length];
-    private  Button EmailInstrucorBtn;
+    //private  Button EmailInstrucorBtn;
     private ViewGroupsAdapter adapter;
     private ArrayList<GroupsInformation> groups = new ArrayList<GroupsInformation>();
     private ListView GroupLists;
@@ -84,7 +85,9 @@ public class GroupFragment extends Fragment {
     private  TextView nogroupinfo;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private  ImageView refresh;
-
+    private  AlertDialog.Builder customDialog;
+    private  Dialog dialog;
+    private Button StartChatBtn;
 
     private static class GroupsInformation
     {
@@ -92,15 +95,17 @@ public class GroupFragment extends Fragment {
         private String NameofGroup;
         private String GroupDescription;
         private  String coursename ;
+        private ArrayList<String> memberEmails;
 
         public  ArrayList<String> members;
 
-        private GroupsInformation(String id , String NameofGroup, String GroupDescription,String coursename, ArrayList<String> members) {
+        private GroupsInformation(String id , String NameofGroup, String GroupDescription,String coursename, ArrayList<String> members, ArrayList<String> memberEmails,  ArrayList<String> memberIds) {
             this.id = id;
             this.NameofGroup = NameofGroup ;
             this.GroupDescription =GroupDescription;
             this.coursename = coursename;
             this.members = members;
+            this.memberEmails = memberEmails;
 
 
         }
@@ -112,6 +117,7 @@ public class GroupFragment extends Fragment {
         }
         public String getNameofGroup() {return this.NameofGroup;}
         public String getGroupDescription() {return this.GroupDescription;}
+        public ArrayList<String> getMemberEmails(){return  this.memberEmails;}
 
         public void setMembers(ArrayList<String> newmembers){this.members = newmembers;}
         public void setGroupDescription(String newGroupDesc){this.GroupDescription = newGroupDesc; }
@@ -142,6 +148,7 @@ public class GroupFragment extends Fragment {
             GroupIcon =  result.findViewById(R.id.GroupIconDisplay);
             GroupDescription = result.findViewById(R.id.GroupDescriptionLabel);
             CardGroup = result.findViewById(R.id.CardGroup);
+
 
 
 
@@ -239,21 +246,8 @@ public class GroupFragment extends Fragment {
             }
         });
         Log.i(FRAGMENT_NAME, "This is the user ID: " + mParam1 );
-        db.collection("user").whereEqualTo(FieldPath.documentId(), mParam1)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                mParam2 = document.getString("first_name") + " " + document.getString("last_name");
-                                DisplayGroupInfo(mParam2);
-                            }
-                        } else {
-                            Log.w(FRAGMENT_NAME, "Error getting documents.", task.getException());
-                        }
-                    }
-                });
+        DisplayGroupInfo(mParam1);
+
 
 
         return test;
@@ -274,13 +268,20 @@ public class GroupFragment extends Fragment {
     public void onStop() {
         super.onStop();
         Log.i(FRAGMENT_NAME, "In OnStop");
-        groups.clear();
+        if (dialog != null)
+        {
+            dialog.dismiss();
+        }
 
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        if (dialog != null)
+        {
+            dialog.dismiss();
+        }
         Log.i(FRAGMENT_NAME, "In onPause");
 
     }
@@ -295,8 +296,8 @@ public class GroupFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        groups.clear();
-        DisplayGroupInfo(mParam2);
+/*        groups.clear();
+        DisplayGroupInfo(mParam2);*/
 
         // Toast.makeText(getActivity(), "New Change", Toast.LENGTH_SHORT).show();
 
@@ -310,20 +311,20 @@ public class GroupFragment extends Fragment {
     public void DisplayGroupInfo(String name)
     {
 
-                db.collection("groups").whereArrayContains("members", name).orderBy("name")
+                db.collection("groups").whereArrayContains("memberIds", name)
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful() && (groups.size() -  task.getResult().size() !=0)) {
-                                    groups.clear();
+                                if (task.isSuccessful()) {
+                                    //groups.clear();
 
-                                    for (DocumentChange document : task.getResult().getDocumentChanges()) {
+                                    for (DocumentChange document : task.getResult().getDocumentChanges() ) {
                                         String groupName = document.getDocument().getString("name");
                                         String groupDesc = document.getDocument().getString("description");
                                         String courseName = document.getDocument().getString("course");
                                         Log.i( " Array information for members : ", "  " +  document.getDocument().get("members") ) ;
-                                        groups.add(new GroupsInformation(document.getDocument().getId(), groupName, groupDesc, courseName, (ArrayList<String>) document.getDocument().get("members")));
+                                        groups.add(new GroupsInformation(document.getDocument().getId(), groupName, groupDesc, courseName, (ArrayList<String>) document.getDocument().get("members"), (ArrayList<String>) document.getDocument().get("memberEmails"), (ArrayList<String>) document.getDocument().get("membersId"))) ;
                                         adapter.notifyDataSetChanged();
                                         if (groups.size()>0 )
                                         {
@@ -361,19 +362,51 @@ public class GroupFragment extends Fragment {
     public void ShowGroupInfo(View view)
     {
 
+        int positionitem= (int) view.getTag();
+
         LayoutInflater inflater = this.getLayoutInflater();
         final View views = inflater.inflate(R.layout.groups_custom_dialog_box, null);
-        EmailInstrucorBtn = views.findViewById(R.id.EmailInstructorBtn);
-        EmailInstrucorBtn.setOnClickListener(new View.OnClickListener() {
+       // EmailInstrucorBtn = views.findViewById(R.id.EmailInstructorBtn);
+        StartChatBtn = views.findViewById(R.id.StartChat);
+     /*   EmailInstrucorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EmailInstructor(view);
+                EmailInstructor(view, positionitem);
+            }
+        });
+*/
+        StartChatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), Groupchat.class);
+                intent.putExtra("groupid", groups.get(positionitem).id);
+                DocumentReference docRef = db.collection("user").document(mParam1);
+
+                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                String name =  (String) document.getString("first_name") + " " + document.getString("last_name") ;
+                                intent.putExtra("name", name);
+                                startActivity(intent);
+
+                            } else {
+                                Log.d(FRAGMENT_NAME, "No such document");
+                            }
+                        } else {
+                            Log.d(FRAGMENT_NAME, "get failed with ", task.getException());
+                        }
+                    }
+                });
+
+
             }
         });
 
 
         Log.i(FRAGMENT_NAME, "List Item Clicked");
-        int positionitem= (int) view.getTag();
         GroupsInformation group = groups.get(positionitem);
         GroupName = views.findViewById(R.id.ViewGroupName);
         TextView GroupDesc = views.findViewById(R.id.ViewGroupDesc);
@@ -393,11 +426,12 @@ public class GroupFragment extends Fragment {
 
         CourseName.setText(group.getCoursename());
 
-        AlertDialog.Builder customDialog =  new AlertDialog.Builder(this.getContext());
+        customDialog =  new AlertDialog.Builder(this.getContext());
         customDialog.setView(views)
                 .setPositiveButton(R.string.Close, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
 
                     }
                 });
@@ -413,15 +447,18 @@ public class GroupFragment extends Fragment {
      * TODO: Start Email Intent to email instructor directly, would need instructor email from firebase
      * @param view
      */
-    public void EmailInstructor(View view)
+    public void EmailInstructor(View view, int positionitem )
     {
+        GroupsInformation info = groups.get(positionitem);
         Intent intent = new Intent(Intent.ACTION_SEND);
-
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"ibra5690@mylaurier.ca"});
+        Log.i(FRAGMENT_NAME, "members: " + info.getMemberEmails());
+        intent.putExtra(Intent.EXTRA_EMAIL, (String[]) info.getMemberEmails().toArray(new String[info.getMemberEmails().size()]));
         intent.putExtra(Intent.EXTRA_SUBJECT, "Email from "+ GroupName.getText());
         intent.setData(Uri.parse("mailto:"));
         if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+
             startActivity(intent);
+
         } else {
             Toast.makeText(getActivity(), R.string.EmailErr,
                     Toast.LENGTH_SHORT).show();
@@ -448,7 +485,7 @@ public class GroupFragment extends Fragment {
         int positionitem= (int) view.getTag();
         GroupsInformation group = groups.get(positionitem);
 
-        AlertDialog.Builder customDialog =  new AlertDialog.Builder(this.getContext());
+        customDialog =  new AlertDialog.Builder(this.getContext());
         customDialog.setView(views)
                 .setPositiveButton(R.string.SaveButtonText, new DialogInterface.OnClickListener() {
                     @Override
@@ -474,7 +511,7 @@ public class GroupFragment extends Fragment {
                     }
 
                 });
-        Dialog dialog = customDialog.create();
+        dialog = customDialog.create();
         dialog.show();
 
 
@@ -559,7 +596,7 @@ public class GroupFragment extends Fragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                     } });
-        AlertDialog dialog = builder.create();
+        dialog = builder.create();
         dialog.show();
 
     }
@@ -608,5 +645,7 @@ public class GroupFragment extends Fragment {
         snackview.setBackgroundColor(color);
         snackbar.show();
     }
+
+
 
 }

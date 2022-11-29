@@ -60,7 +60,11 @@ public class CreateGroupFragment extends Fragment {
     protected LinearProgressIndicator ProgressIndicator;
     protected EditText GroupNameInput;
     protected EditText GroupDescInput;
+    protected  ArrayList<String> memberEmails = new ArrayList<>();
+    protected  ArrayList<String> memberIds = new ArrayList<>();
 
+    protected  ArrayList<String> finalmemberEmails = new ArrayList<>();
+    protected  ArrayList<String> finalmemberIds = new ArrayList<>();
     protected static RecyclerViewAdapter_AddStudent addstudentadapter;
     protected static ArrayAdapter<CharSequence> adapter;
     protected  ArrayAdapter<CharSequence> adapter2;
@@ -154,6 +158,12 @@ public class CreateGroupFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 students.clear();
+
+              //  finalmemberEmails.clear();
+                memberIds.clear();
+                finalmemberIds.clear();
+                Log.i(FRAGMENT_NAME, " This is the final member size " + finalmemberIds.size());
+                memberIds.add("None");
                 students.add("None");
                 adapter.notifyDataSetChanged();
                 //Have to reset existing chipview data once user selects a diff item
@@ -176,6 +186,12 @@ public class CreateGroupFragment extends Fragment {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         String name = (String) document.get("first_name") + " " + document.getString("last_name");
+                                       // memberEmails.add((String) (document.get("email")));
+                                        if (!document.getId().equals(UserId))
+                                        {
+                                            memberIds.add(document.getId());
+
+                                        }
                                         if (name.compareTo(user.get(0)) != 0 ) {
                                             students.add(name);
                                         }
@@ -219,12 +235,22 @@ public class CreateGroupFragment extends Fragment {
 
             if (spinner_position!=0) {
 
-                String selected_item = StudentSpinner.getItemAtPosition(spinner_position).toString();
-                Log.i(FRAGMENT_NAME, selected_item);
-                user.add(selected_item);
-                students.remove(StudentSpinner.getSelectedItemPosition());
-                adapter.notifyDataSetChanged();
-                addstudentadapter.notifyDataSetChanged();
+
+
+                    String selected_item = StudentSpinner.getItemAtPosition(spinner_position).toString();
+                    Log.i(FRAGMENT_NAME, "This is the Spinner Position " + spinner_position);
+                    finalmemberIds.add(memberIds.get(spinner_position));
+
+                    user.add(selected_item);
+                    // finalmemberIds.add(UserId);
+                    Log.i(FRAGMENT_NAME, " THis is the member Id " + memberIds.get(spinner_position));
+                    // finalmemberEmails.add(memberEmails.get(spinner_position));
+
+                    students.remove(StudentSpinner.getSelectedItemPosition());
+                    memberIds.remove(spinner_position);
+                    adapter.notifyDataSetChanged();
+
+                    addstudentadapter.notifyDataSetChanged();
 
 
             }
@@ -288,12 +314,20 @@ public class CreateGroupFragment extends Fragment {
     {
         Log.i(FRAGMENT_NAME, "Writing to database ");
 
-
+        for (String member : memberIds)
+        {
+            Log.i(FRAGMENT_NAME, member);
+        }
+        finalmemberIds.add(0, UserId);
+        ArrayList<String> messages = new ArrayList<String>();
         Map<String, Object> group = new HashMap<>();
         group.put("course", courses.get(CourseSpinner.getSelectedItemPosition()));
         group.put("description", GroupDescInput.getText().toString());
         group.put("name", GroupNameInput.getText().toString());
         group.put("members", user);
+        group.put("memberEmails", finalmemberEmails);
+        group.put("memberIds", finalmemberIds);
+        group.put("messages", messages);
       //  ProgressIndicator.setProgressCompat(50, true);
 
 

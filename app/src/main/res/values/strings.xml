@@ -64,15 +64,15 @@
     <!--  Create Groups Strings.xml uses -->
 
     <string name="BannerRegistrationPage"> Groups Registration Page</string>
-    <string name= "FormErr"> Err: Form is invalid, please make sure all fields are completed</string>
+    <string name="FormErr"> Err: Form is invalid, please make sure all fields are completed</string>
     <!--  Create Groups String.xml  end  -->
 
     <!--  Groups Fragment Strings.xml uses -->
     <string name="Close"> Close </string>
-    <string name = "EmailErr">You do not have an app that can send emails </string>
-    <string name = "SaveButtonText"> Save </string>
-    <string name = "ConfirmGroupReButton"> Are you sure you want to be removed from </string>
-    <string name = "Yes"> Yes</string>
+    <string name="EmailErr">You do not have an app that can send emails </string>
+    <string name="SaveButtonText"> Save </string>
+    <string name="ConfirmGroupReButton"> Are you sure you want to be removed from </string>
+    <string name="Yes"> Yes</string>
     <string name="NoGroupsPage"> No groups available! </string>
     <!--  Groups Fragment Strings.xml end  -->
 
@@ -97,7 +97,6 @@ To get started you can click on the create a group button, this will take you to
     <string name="noClassAdded"> You have no classes </string>
 
     <!-- Class Fragment Strings.xml End-->
-
 
 
 </resources>

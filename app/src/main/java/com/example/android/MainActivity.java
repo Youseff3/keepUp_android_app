@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
-        classButton.performClick(); // Might need to change, this actually loads the first fragment and pases the Bundle info
+       classButton.performClick(); // Might need to change, this actually loads the first fragment and pases the Bundle info
 
         return true;
     }
@@ -159,10 +159,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void newEventAction(View view)
+/*    public void newEventAction(View view)
     {
         startActivity(new Intent(this, EventLayoutActivity.class));
-    }
+    }*/
 
     @Override
     protected void onDestroy() {

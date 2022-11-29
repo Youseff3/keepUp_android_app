@@ -60,7 +60,6 @@
         android:text="New Appointment"
         android:background="@null"
         android:textStyle="bold"
-        android:onClick="newEventAction"
         android:layout_gravity="center"
         android:textSize="20sp"/>
 
