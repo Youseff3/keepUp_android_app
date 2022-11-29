@@ -7,13 +7,14 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link RemoveClassFragment#newInstance} factory method to
+ * Use the {@link AdminAppointmentFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RemoveClassFragment extends Fragment {
+public class AdminAppointmentFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,7 +25,7 @@ public class RemoveClassFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public RemoveClassFragment() {
+    public AdminAppointmentFragment() {
         // Required empty public constructor
     }
 
@@ -34,11 +35,11 @@ public class RemoveClassFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment RemoveClassFragment.
+     * @return A new instance of fragment AdminAppointmentFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static RemoveClassFragment newInstance(String param1, String param2) {
-        RemoveClassFragment fragment = new RemoveClassFragment();
+    public static AdminAppointmentFragment newInstance(String param1, String param2) {
+        AdminAppointmentFragment fragment = new AdminAppointmentFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -59,6 +60,12 @@ public class RemoveClassFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_remove_class, container, false);
+        View inflatedView=inflater.inflate(R.layout.fragment_admin_appointment, container, false);
+
+        Button cancelAppBtn=inflatedView.findViewById(R.id.adminRemoveAppointmentBtn);
+        Button viewAppBtn=inflatedView.findViewById(R.id.adminViewAppointmentsBtn);
+
+
+        return inflatedView;
     }
 }

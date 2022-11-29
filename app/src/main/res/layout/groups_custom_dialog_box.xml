@@ -11,7 +11,6 @@
     android:layout_gravity="center"
     android:layout_margin="20dp"
     android:padding="20dp"
-    app:strokeColor="#808080"
     app:strokeWidth="@dimen/cardview_default_radius"
 
     >
@@ -98,6 +97,7 @@
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="62dp"
+            android:gravity="center"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -130,10 +130,18 @@
 
                     android:visibility="invisible" />
 
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/Chip4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Third User"
+                    android:visibility="invisible" />
+
             </TableRow>
         </TableLayout>
 
         <LinearLayout
+            android:id="@+id/linearLayout6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -145,22 +153,33 @@
             app:layout_constraintVertical_bias="0.077">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/StartChat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#808080"
+                android:backgroundTint="@color/purple_700"
                 android:layout_marginEnd="10dp"
+                android:text="Start Chat" />
 
-                android:text="Email Group"
-                android:textColor="#FFFFFF"/>
+            <!--            <com.google.android.material.button.MaterialButton
+                            android:id="@+id/EmailInstructorBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#808080"
 
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#808080"
 
-                android:text="Email Group"
-                android:textColor="#FFFFFF" />
+                            android:text="Email Instructor"
+                            android:textColor="#FFFFFF" />-->
         </LinearLayout>
+
+        <ImageView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/linearLayout6"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+            app:srcCompat="@android:drawable/sym_action_chat"
+            app:tint="@color/green"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

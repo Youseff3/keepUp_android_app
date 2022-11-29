@@ -1,20 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddClassFragment">
+    tools:context=".AddClassFragment"
+    android:layout_gravity="center"
 
-    <!-- TODO: Update blank fragment layout -->
+    >
+
+
     <TextView
+        android:id="@+id/courseRegTV"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Pick one or more classes:"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text= "Course Registration Page"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textAlignment="center"
+        android:layout_margin="20dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        />
+
+        <TextView
+            android:id="@+id/LevelSelectText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select a level " />
+
+        <Spinner
+            android:id="@+id/LevelSelectionSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/CourseSelectText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select a course " />
+
+        <Spinner
+            android:id="@+id/addCourseSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <Button
+            android:id="@+id/addClassAndSaveBtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:text="Add Class"
+            >
 
 
+        </Button>
+    </LinearLayout>
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -111,10 +111,10 @@ public class RegisterActivity2 extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                 if(checked){
-                levelPreference.add("1");
+                    levelPreference.add("100");
                 }else{
-                    if(levelPreference.contains("1")){
-                        levelPreference.remove(Integer.valueOf("1"));
+                    if(levelPreference.contains("100")){
+                        levelPreference.remove("100");
                     }
                 }
             }
@@ -124,10 +124,10 @@ public class RegisterActivity2 extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                 if(checked){
-                    levelPreference.add("2");
+                    levelPreference.add("200");
                 }else{
-                    if(levelPreference.contains("2")){
-                        levelPreference.remove(Integer.valueOf("2"));
+                    if(levelPreference.contains("200")){
+                        levelPreference.remove("200");
                     }
                 }
             }
@@ -137,10 +137,10 @@ public class RegisterActivity2 extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                 if(checked){
-                    levelPreference.add("3");
+                    levelPreference.add("300");
                 }else{
-                    if(levelPreference.contains("3")){
-                        levelPreference.remove(Integer.valueOf("3"));
+                    if(levelPreference.contains("300")){
+                        levelPreference.remove("300");
                     }
                 }
             }
@@ -150,10 +150,10 @@ public class RegisterActivity2 extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                 if(checked){
-                    levelPreference.add("4");
+                    levelPreference.add("400");
                 }else{
-                    if(levelPreference.contains("4")){
-                        levelPreference.remove(Integer.valueOf("4"));
+                    if(levelPreference.contains("400")){
+                        levelPreference.remove("400");
                     }
                 }
             }
@@ -193,7 +193,7 @@ public class RegisterActivity2 extends AppCompatActivity {
                     public void onItemSelected(AdapterView <?> adapterView,
                                                View view, int i, long l) {
 //                        new GetAllContent().execute();
-                        termPreference=Integer.toString(i+1);
+                        termPreference=termList.get(i);
                         levelTV.setVisibility(View.VISIBLE);
                         for (int j=0;j<levelList.size();j++){
                             level_switch_buttons[j]=(Switch)findViewById(idArray2[j]);
@@ -236,8 +236,11 @@ public class RegisterActivity2 extends AppCompatActivity {
             Elements terms=doc.select("div#tab-contents > section > h2");
             int  i=0;
             for(Element element:terms){
-                String term=element.text();
-                termList.add(term.trim());
+                if(i<3) {
+                    String term = element.text();
+                    termList.add(term.trim());
+                }
+                i++;
             }
         }
         @Override
@@ -262,11 +265,11 @@ public class RegisterActivity2 extends AppCompatActivity {
                 conn.connect();
                 InputStream in = conn.getInputStream();
                 try{
-                contents = convertStreamToString(in);
+                    contents = convertStreamToString(in);
 //                Log.i(ACTIVITY_NAME,contents);
                 }
                 finally{
-                in.close();
+                    in.close();
                 }
             } catch (ProtocolException e) {
                 e.printStackTrace();
@@ -294,7 +297,7 @@ public class RegisterActivity2 extends AppCompatActivity {
 
     }
 
-//    public void goToCourseSelection(View view){
+    //    public void goToCourseSelection(View view){
 //        Intent intent=new Intent(RegisterActivity2.this,CourseSelectionActivity.class);
 //        intent.putExtra("year",yearPreference);
 //        intent.putExtra("term",termPreference);

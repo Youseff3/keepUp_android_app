@@ -1,16 +1,42 @@
 package com.example.android;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.chip.Chip;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,13 +45,19 @@ import java.util.ArrayList;
  */
 public class ClassFragment extends Fragment {
     protected static final String FRAGMENT_NAME="ClassFragment";
-    private TextView coursesTV;
-    private Button addCourseBtn,removeCourseBtn;
-    ArrayList<String> coursesList;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    protected static int[] colorIcon = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW};
+    private  ViewClassAdpater adapter;
+    private final ArrayList<String> Studentclass = new ArrayList<String>();
+    private Map<String,String> StudentDesc = new HashMap<String,String>();
+    private ArrayList<String> courses = new ArrayList<String>();
+
+    private ListView Classlist;
+    TextView noclassinfo;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String UserID  = "userID";
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
@@ -49,17 +81,60 @@ public class ClassFragment extends Fragment {
     public static ClassFragment newInstance(String param1, String param2) {
         ClassFragment fragment = new ClassFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putString(UserID, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
+    private class ViewClassAdpater extends ArrayAdapter<String> {
+        public ViewClassAdpater(@NonNull Context context, int resource) {
+            super(context, resource);
+        }
 
+        public int getCount() {
+            return Studentclass.size();
+        }
+
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = ClassFragment.this.getLayoutInflater();
+            View result = inflater.inflate(R.layout.group_list_view, null);
+            TextView message = result.findViewById(R.id.GroupNameLabel);
+            ImageView deleteButton = result.findViewById(R.id.RemoveGroup);
+            ImageView classIcon = result.findViewById(R.id.GroupIconDisplay);
+            TextView groupDescription = result.findViewById(R.id.GroupDescriptionLabel);
+            CardView cardGroup = result.findViewById(R.id.CardGroup);
+            ImageView EditIcon = result.findViewById(R.id.EditIcon);
+            EditIcon.setVisibility(View.INVISIBLE);
+
+
+            deleteButton.setTag(position);
+            classIcon.setTag(position);
+            cardGroup.setTag(position);
+
+            message.setText(Studentclass.get(position));
+            groupDescription.setText(StudentDesc.get(Studentclass.get(position)));
+            classIcon.setImageResource(R.drawable.class_icon);
+            classIcon.setColorFilter((colorIcon[ (int)Math.floor(Math.random()*(colorIcon.length))]));
+            classIcon.setVisibility(View.INVISIBLE);
+
+            ImageView removeClassIV= result.findViewById(R.id.RemoveGroup);
+            removeClassIV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    RemoveClass(view);
+                }
+            });
+            return result;
+        }
+
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            Log.i(FRAGMENT_NAME, "Bundle Received");
+            mParam1 = getArguments().getString(UserID);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
@@ -68,40 +143,126 @@ public class ClassFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View inflatedView=inflater.inflate(R.layout.fragment_class, container, false);
 
-        coursesTV=inflatedView.findViewById(R.id.coursesTV);
-//        if(coursesList.size()==0){
-//            coursesTV.setText("You do not have any classes chosen");
-//        }else{
-//            coursesTV.setText("");
-//            for(String course:coursesList){
-//                coursesTV.append(course+"\n");
-//            }
-//        }
+        Studentclass.clear();
+        View test=inflater.inflate(R.layout.fragment_group, container, false);
+        Classlist= test.findViewById(R.id.GroupinformationList);
+        TextView nogroupinfo = test.findViewById(R.id.NoGroupinfo);
+        TextView addclassBtn= test.findViewById(R.id.BannerText);
+        addclassBtn.setText("Add a class");
+        adapter = new ViewClassAdpater(this.getContext(), 0);
+        Classlist.setAdapter(adapter);
+        nogroupinfo.setText(R.string.noClassAdded);
+        nogroupinfo.setVisibility(View.INVISIBLE);
+        Classlist.setVisibility(View.VISIBLE);
 
-        addCourseBtn=inflatedView.findViewById(R.id.addClassBtn);
-        addCourseBtn.setOnClickListener(new View.OnClickListener() {
+        CardView btn=test.findViewById(R.id.Banner);
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainerView,AddClassFragment.class,null)
+                        .replace(R.id.fragmentContainerView,AddClassFragment.class,getArguments()) //TODO: Change to Add Class Fragment
                         .setReorderingAllowed(true)
                         .addToBackStack("tempBackStack")
                         .commit();
             }
         });
-        removeCourseBtn=inflatedView.findViewById(R.id.removeClassBtn);
-        removeCourseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainerView,RemoveClassFragment.class,null)
-                        .setReorderingAllowed(true)
-                        .addToBackStack("tempBackStack")
-                        .commit();
-            }
-        });
-        return inflatedView;
+
+        Log.i(FRAGMENT_NAME, "This is the param "+ mParam1);
+        if (mParam1!=null) {
+            db.collection("user").whereEqualTo(FieldPath.documentId(), mParam1)  // ERR; Main activity is not passing the dat
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    ArrayList<String> temp=(ArrayList<String>) document.get("courses");
+
+                                    db.collection("courses")
+                                            .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (DocumentChange document : task.getResult().getDocumentChanges()) {
+                                                            String courseName = document.getDocument().getString("code");
+                                                            String courseSection = document.getDocument().getString("section");
+                                                            String courseTerm=document.getDocument().getString("term");
+                                                            String courseDesc=document.getDocument().getString("description");
+
+                                                            if(temp.contains(courseName+" "+courseSection)){
+                                                                Log.i(FRAGMENT_NAME,courseName+" "+courseSection);
+                                                                StudentDesc.put(courseName+" "+courseSection,courseDesc);
+                                                            }
+                                                        }
+                                                        DisplayRegClasses(temp);
+
+                                                    } else {
+                                                        Log.w(FRAGMENT_NAME, "Error getting documents or no changes yet.", task.getException());
+                                                    }
+                                                }
+                                            });
+//                                    DisplayRegClasses(temp);
+                                }
+                            } else {
+                                Log.w(FRAGMENT_NAME, "Error getting documents.", task.getException());
+                            }
+                        }
+                    });
+        }
+
+        return test;
     }
+
+    public void DisplayRegClasses(ArrayList<String> studentClasses )
+    {
+
+        for (String course : studentClasses)
+        {
+            Studentclass.add(course);
+        }
+        Log.i(FRAGMENT_NAME, "Courses: " + Studentclass.size());
+        adapter.notifyDataSetChanged();
+    }
+
+
+    public void RemoveClass(View view )
+    {
+        int positionitemToDelete = (int) view.getTag();
+        String coursename = Studentclass.get(positionitemToDelete);
+
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(this.getContext());
+
+        builder.setTitle("Are you sure you want to be removed from:" +  coursename);
+        builder.setPositiveButton(R.string.Yes,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Studentclass.remove(positionitemToDelete);
+                        adapter.notifyDataSetChanged();
+                        if (Studentclass.size() == 0 )
+                        {
+
+
+                            noclassinfo.setVisibility(View.VISIBLE);
+                            Classlist.setVisibility(View.INVISIBLE);
+                        }
+                        deletefromdatabase(coursename, mParam1 );
+                    } });
+        builder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    } });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+    public void deletefromdatabase(String coursename, String userID )
+    {
+        DocumentReference groupsRef = db.collection("user").document(userID);
+        groupsRef.update("courses", FieldValue.arrayRemove(coursename));
+
+    }
+
 }

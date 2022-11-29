@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class Event {
     public static ArrayList<Event> eventsList = new ArrayList<>();
 
-    public static ArrayList<Event> eventsForDateAndTime(LocalDate date,LocalTime time) {
+    public static ArrayList<Event> eventsForDateAndTime(LocalDate date,LocalTime time,String course) {
         ArrayList<Event> events = new ArrayList<>();
 
         for(Event event : eventsList)
@@ -19,12 +19,10 @@ public class Event {
             int cellHour=time.getHour();
 //            Log.i("eventHour",String.valueOf(eventHour));
 //            Log.i("cellHour",String.valueOf(cellHour));
-
-
-            if(event.getDate().equals(date) && eventHour==cellHour) {
+            if(event.getDate().equals(date) && eventHour==cellHour && event.getCourse().equals(course)) {
                 events.add(event);
-                Log.i("eventHour", String.valueOf(eventHour));
-                Log.i("cellHour", String.valueOf(cellHour));
+//                Log.i("eventHour", String.valueOf(eventHour));
+//                Log.i("cellHour", String.valueOf(cellHour));
             }
         }
 

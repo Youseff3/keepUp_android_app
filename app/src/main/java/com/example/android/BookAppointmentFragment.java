@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,6 +32,7 @@ import java.time.LocalTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,6 +51,7 @@ public class BookAppointmentFragment extends Fragment {
     private Spinner courseSpinner;
     String coursePreference;
     List<String> courseList;
+    ArrayList<ArrayList<String>> bookedApps;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -103,33 +106,62 @@ public class BookAppointmentFragment extends Fragment {
         hourListView=inflatedView.findViewById(R.id.hourListView);
         dayOfWeekTV=inflatedView.findViewById(R.id.dayOfWeekTV);
         CalendarUtils.selectedDate = LocalDate.now();
-        setDayView();
 
-        Button nextBtn=inflatedView.findViewById(R.id.nextDayBtn);
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CalendarUtils.selectedDate = CalendarUtils.selectedDate.plusDays(1);
-                setDayView();
-            }
-        });
-        Button prevBtn=inflatedView.findViewById(R.id.prevDayBtn);
-        prevBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CalendarUtils.selectedDate = CalendarUtils.selectedDate.minusDays(1);
-                setDayView();
-            }
-        });
+        db.collection("appointment")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            bookedApps=new ArrayList<ArrayList<String>>();
+                            for (DocumentChange document : task.getResult().getDocumentChanges()) {
+                                String userKey = document.getDocument().getString("user");
+                                String time = document.getDocument().getString("time");
+                                String date=document.getDocument().getString("date");
+                                String course=document.getDocument().getString("course");
+                                String title=document.getDocument().getString("title");
 
-        hourListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent=new Intent(getActivity(),EventLayoutActivity.class);
-                String time=((HourEvent)hourListView.getItemAtPosition(i)).getTime().toString();
-                intent.putExtra("time",time);
-                intent.putExtra("course",coursePreference);
-                startActivity(intent);
+                                if(userKey.equals(MainActivity.UserId)){
+                                    ArrayList<String> app=new ArrayList<String>();
+                                    app.add(course);
+                                    app.add(date);
+                                    app.add(time);
+//                                    app.add(title);
+                                    bookedApps.add(app);
+                                }
+                            }
+
+                        setDayView();
+
+                        Button nextBtn=inflatedView.findViewById(R.id.nextDayBtn);
+                        nextBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                CalendarUtils.selectedDate = CalendarUtils.selectedDate.plusDays(1);
+                                setDayView();
+                            }
+                        });
+                        Button prevBtn=inflatedView.findViewById(R.id.prevDayBtn);
+                        prevBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                CalendarUtils.selectedDate = CalendarUtils.selectedDate.minusDays(1);
+                                setDayView();
+                            }
+                        });
+
+                        hourListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                Intent intent=new Intent(getActivity(),EventLayoutActivity.class);
+                                String time=((HourEvent)hourListView.getItemAtPosition(i)).getTime().toString();
+                                intent.putExtra("time",time);
+                                intent.putExtra("course",coursePreference);
+                                startActivity(intent);
+                            }
+                        });
+                } else {
+                    Log.d(FRAGMENT_NAME, "get failed with ", task.getException());
+                }
             }
         });
 
@@ -139,7 +171,34 @@ public class BookAppointmentFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        setDayView();
+        db.collection("appointment")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            bookedApps=new ArrayList<ArrayList<String>>();
+                            for (DocumentChange document : task.getResult().getDocumentChanges()) {
+                                String userKey = document.getDocument().getString("user");
+                                String time = document.getDocument().getString("time");
+                                String date=document.getDocument().getString("date");
+                                String course=document.getDocument().getString("course");
+                                String title=document.getDocument().getString("title");
+
+                                if(userKey.equals(MainActivity.UserId)){
+                                    ArrayList<String> app=new ArrayList<String>();
+                                    app.add(course);
+                                    app.add(date);
+                                    app.add(time);
+//                                    app.add(title);
+                                    bookedApps.add(app);
+                                }
+                            }
+                            setDayView();
+                        } else {
+                            Log.d(FRAGMENT_NAME, "get failed with ", task.getException());
+                        }
+                    }
+                });
     }
 
     private void setDayView() {
@@ -156,12 +215,26 @@ public class BookAppointmentFragment extends Fragment {
     private ArrayList<HourEvent> hourEventList() {
         ArrayList<HourEvent> allHourEventslist=new ArrayList<>();
         for(int hour=8;hour<17;hour++){
-            LocalTime time= LocalTime.of(hour,0);
-            ArrayList<Event> events=Event.eventsForDateAndTime(CalendarUtils.selectedDate,time);
-            HourEvent hourEvent=new HourEvent(time,events);
-            ArrayList<Event> hourEventCheck=hourEvent.getEvents();
-            if(hourEventCheck.size()==0) {
-                allHourEventslist.add(hourEvent);
+            LocalTime time = LocalTime.of(hour, 0);
+            Boolean app_check=true;
+                for (ArrayList<String> app : bookedApps) {
+//                    Log.i(FRAGMENT_NAME, app.get(0));
+//                    Log.i(FRAGMENT_NAME, coursePreference);
+//                    Log.i(FRAGMENT_NAME, app.get(1));
+//                    Log.i(FRAGMENT_NAME, time.toString());
+//                    Log.i(FRAGMENT_NAME, app.get(2));
+//                    Log.i(FRAGMENT_NAME, CalendarUtils.formattedDate(CalendarUtils.selectedDate));
+                    if (app.get(0).equals(coursePreference) && app.get(2).equals(time.toString()) && app.get(1).equals(CalendarUtils.formattedDate(CalendarUtils.selectedDate))) {
+                        app_check = false;
+                    }
+                }
+            if(app_check) {
+                ArrayList<Event> events = Event.eventsForDateAndTime(CalendarUtils.selectedDate, time,coursePreference);
+                HourEvent hourEvent = new HourEvent(time, events);
+                ArrayList<Event> hourEventCheck = hourEvent.getEvents();
+                if (hourEventCheck.size() == 0) {
+                    allHourEventslist.add(hourEvent);
+                }
             }
         }
         return allHourEventslist;
@@ -169,45 +242,68 @@ public class BookAppointmentFragment extends Fragment {
 
     public void get_a_course(Spinner courseSpinner) {
 //        Log.i(ACTIVITY_NAME,"get a year");
-
-        courseList= new ArrayList<String>();
-        CollectionReference docRef = db.collection("user").document(MainActivity.userID).collection("courses");
-
-        docRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        DocumentReference docRef = db.collection("user").document(MainActivity.UserId);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.d(FRAGMENT_NAME, document.getId() + " => " + document.getData());
-                        for(Map.Entry<String,Object> entry: document.getData().entrySet()) {
-                            courseList.add(entry.getKey());
-                            Log.i(FRAGMENT_NAME, entry.getKey());
-                            Log.i(FRAGMENT_NAME, String.valueOf(entry.getValue()));
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        courseList = (ArrayList<String> ) document.get("courses");
+//                        if(coursePreference.length()<2){
+                            coursePreference=courseList.get(0);
+//                        }
+                        ArrayAdapter<CharSequence> adapter = new ArrayAdapter( getContext(), android.R.layout.simple_spinner_dropdown_item,courseList);
+                        courseSpinner.setAdapter(adapter);
+                        courseSpinner.setOnItemSelectedListener(
+                                new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView <?> adapterView,
+                                                               View view, int i, long l) {
+                                        coursePreference=courseList.get(i);
 
-                        }
+                                        db.collection("appointment")
+                                                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                        if (task.isSuccessful()) {
+                                                            bookedApps=new ArrayList<ArrayList<String>>();
+                                                            for (DocumentChange document : task.getResult().getDocumentChanges()) {
+                                                                String userKey = document.getDocument().getString("user");
+                                                                String time = document.getDocument().getString("time");
+                                                                String date=document.getDocument().getString("date");
+                                                                String course=document.getDocument().getString("course");
+                                                                String title=document.getDocument().getString("title");
+
+                                                                if(userKey.equals(MainActivity.UserId)){
+                                                                    ArrayList<String> app=new ArrayList<String>();
+                                                                    app.add(course);
+                                                                    app.add(date);
+                                                                    app.add(time);
+                                                                    bookedApps.add(app);
+                                                                }
+                                                            }
+                                                            setDayView();
+                                                        } else {
+                                                            Log.d(FRAGMENT_NAME, "get failed with ", task.getException());
+                                                        }
+                                                    }
+                                                });
+                                    }
+                                    @Override
+                                    public void onNothingSelected(AdapterView <?> adapterView) {
+                                    }
+                                });
+                        Log.d(FRAGMENT_NAME, "DocumentSnapshot data: " + courseList);
+                    } else {
+                        Log.d(FRAGMENT_NAME, "No such document");
                     }
                 } else {
-                    Log.d(FRAGMENT_NAME, "Error getting documents: ", task.getException());
+                    Log.d(FRAGMENT_NAME, "get failed with ", task.getException());
                 }
             }
         });
 
-/*
-        courseList = Arrays.asList(getResources().getStringArray(R.array.courses_list));
-*/
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter( getContext(), android.R.layout.simple_spinner_dropdown_item,courseList);
-        courseSpinner.setAdapter(adapter);
-        courseSpinner.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView <?> adapterView,
-                                               View view, int i, long l) {
-                        coursePreference=courseList.get(i);
-                    }
-                    @Override
-                    public void onNothingSelected(AdapterView <?> adapterView) {
-                    }
-                });
     }
 
 }

@@ -15,21 +15,32 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,30 +52,34 @@ import java.util.Map;
 public class CreateGroupFragment extends Fragment {
 
     protected static final String FRAGMENT_NAME="CreateGroupFragment";
-
-
     protected FirebaseFirestore db = FirebaseFirestore.getInstance();
-    protected static final int MAXIMUM = 3;
+    protected static final int MAXIMUM = 4;
     protected Spinner StudentSpinner;
     protected Spinner CourseSpinner;
     protected Button AddButton;
     protected LinearProgressIndicator ProgressIndicator;
     protected EditText GroupNameInput;
     protected EditText GroupDescInput;
+    protected  ArrayList<String> memberEmails = new ArrayList<>();
+    protected  ArrayList<String> memberIds = new ArrayList<>();
 
+    protected  ArrayList<String> finalmemberEmails = new ArrayList<>();
+    protected  ArrayList<String> finalmemberIds = new ArrayList<>();
     protected static RecyclerViewAdapter_AddStudent addstudentadapter;
-    protected ArrayAdapter<CharSequence> adapter;
+    protected static ArrayAdapter<CharSequence> adapter;
     protected  ArrayAdapter<CharSequence> adapter2;
     protected RecyclerView StudentList;
     public static  ArrayList<String> user = new ArrayList<String >();
+    public ArrayList<String> courses = new ArrayList<>();
+    public static ArrayList<String> students = new ArrayList<>();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM1 = "userID";
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String UserId;
     private String mParam2;
 
     public CreateGroupFragment() {
@@ -93,7 +108,7 @@ public class CreateGroupFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            UserId = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
@@ -103,7 +118,6 @@ public class CreateGroupFragment extends Fragment {
                              Bundle savedInstanceState) {
         View inflated_view=inflater.inflate(R.layout.fragment_create_group, container, false);
 
-//        Chip chip=inflated_view.findViewById(R.id.AddGroup);
 
 
 
@@ -112,28 +126,93 @@ public class CreateGroupFragment extends Fragment {
         AddButton = inflated_view.findViewById(R.id.AddButton);
         StudentList = inflated_view.findViewById(R.id.UsersAdd);
         addstudentadapter = new RecyclerViewAdapter_AddStudent(this.getContext(),user );
-        ProgressIndicator = inflated_view.findViewById(R.id.ProgressIndicator);
+//        ProgressIndicator = inflated_view.findViewById(R.id.ProgressIndicator);
         GroupNameInput = inflated_view.findViewById(R.id.TextGroupName);
         GroupDescInput = inflated_view.findViewById(R.id.GroupDescInput);
 
 
 
-        adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.sudent_list, android.R.layout.simple_spinner_item );
-        adapter2 = ArrayAdapter.createFromResource(this.getContext(), R.array.courses_list, android.R.layout.simple_spinner_item );
+
+        adapter  = new ArrayAdapter(getContext(),  android.R.layout.simple_spinner_item, students);
         adapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+        StudentSpinner.setAdapter(adapter);
+
+        adapter2 = new ArrayAdapter(getContext(),  android.R.layout.simple_spinner_item, courses );
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        ProgressIndicator.setIndeterminate(false);
+        CourseSpinner.setAdapter(adapter2);
+
+//        ProgressIndicator.setIndeterminate(false);
 
         StudentList.setAdapter(addstudentadapter);
         StudentList.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        StudentSpinner.setAdapter(adapter);
-        CourseSpinner.setAdapter(adapter2);
-
+        PopulateFormDb(UserId);
         AddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AddUser(view);
+            }
+        });
+
+        CourseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                students.clear();
+
+                //  finalmemberEmails.clear();
+                memberIds.clear();
+                finalmemberIds.clear();
+                Log.i(FRAGMENT_NAME, " This is the final member size " + finalmemberIds.size());
+                memberIds.add("None");
+                students.add("None");
+                adapter.notifyDataSetChanged();
+                //Have to reset existing chipview data once user selects a diff item
+                boolean changed = false;
+                for (int j = 1; j<user.size(); j++)
+                {
+                    user.remove(j);
+                    changed = true;
+                }
+                if (changed) {
+                    addstudentadapter.notifyDataSetChanged();
+                }
+
+                db.collection("user")
+                        .whereArrayContains("courses", courses.get(i))
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        String name = (String) document.get("first_name") + " " + document.getString("last_name");
+                                        // memberEmails.add((String) (document.get("email")));
+                                        if (!document.getId().equals(UserId))
+                                        {
+                                            memberIds.add(document.getId());
+
+                                        }
+                                        if (name.compareTo(user.get(0)) != 0 ) {
+                                            students.add(name);
+                                        }
+                                        adapter.notifyDataSetChanged();
+
+
+                                    }
+                                } else {
+                                    Log.d(FRAGMENT_NAME, "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
+
+
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
 
@@ -156,11 +235,23 @@ public class CreateGroupFragment extends Fragment {
 
             if (spinner_position!=0) {
 
+
+
                 String selected_item = StudentSpinner.getItemAtPosition(spinner_position).toString();
-                Log.i(FRAGMENT_NAME, selected_item);
+                Log.i(FRAGMENT_NAME, "This is the Spinner Position " + spinner_position);
+                finalmemberIds.add(memberIds.get(spinner_position));
 
                 user.add(selected_item);
-                addstudentadapter.notifyItemInserted(user.size());
+                // finalmemberIds.add(UserId);
+                Log.i(FRAGMENT_NAME, " THis is the member Id " + memberIds.get(spinner_position));
+                // finalmemberEmails.add(memberEmails.get(spinner_position));
+
+                students.remove(StudentSpinner.getSelectedItemPosition());
+                memberIds.remove(spinner_position);
+                adapter.notifyDataSetChanged();
+
+                addstudentadapter.notifyDataSetChanged();
+
 
             }
 
@@ -175,14 +266,13 @@ public class CreateGroupFragment extends Fragment {
     public void SaveForm(View view){
 
         if (!ValidateForm()) {
-            String message = "Err: Form is invalid, please make sure all fields are completed";
-            PrintSnackbar(message, Color.RED, Snackbar.LENGTH_LONG);
+            PrintSnackbar( R.string.FormErr, Color.RED, Snackbar.LENGTH_LONG);
         }
         else {
             WriteToDatabase();
         }
     }
-    private void PrintSnackbar(String message, int color, int duration)
+    private void PrintSnackbar(int message, int color, int duration)
     {
         Snackbar snackbar = Snackbar.make(this.getActivity().findViewById(R.id.linearLayout), message, duration)
                 .setAction("Action", null);
@@ -194,8 +284,7 @@ public class CreateGroupFragment extends Fragment {
         if (CourseSpinner.getSelectedItemPosition() != 0 )
             if (!(GroupNameInput.getText().toString().compareTo("")==0) )
                 if (!(GroupDescInput.getText().toString().compareTo("") == 0))
-                    if (user.size()>0)
-                        return true;
+                    return user.size() > 1;
 
         return false;
     }
@@ -208,9 +297,12 @@ public class CreateGroupFragment extends Fragment {
         Log.i(FRAGMENT_NAME, element);
 
         while(!removed && i< user.size()) {
-            if (user.get(i).compareTo(elementDelete.getText().toString()) == 0) {
+            if (user.get(i).compareTo(elementDelete.getText().toString()) == 0 && i!=0) {
+                students.add(user.get(i));
                 user.remove(i);
+
                 removed = true;
+                adapter.notifyDataSetChanged();
                 addstudentadapter.notifyItemRemoved(i);
                 addstudentadapter.notifyItemRangeChanged(i, user.size() - i);
 
@@ -218,15 +310,25 @@ public class CreateGroupFragment extends Fragment {
             i++;
         }
     }
-    private void WriteToDatabase()
+    public void WriteToDatabase()
     {
         Log.i(FRAGMENT_NAME, "Writing to database ");
+
+        for (String member : memberIds)
+        {
+            Log.i(FRAGMENT_NAME, member);
+        }
+        finalmemberIds.add(0, UserId);
+        ArrayList<String> messages = new ArrayList<String>();
         Map<String, Object> group = new HashMap<>();
-        group.put("course", CourseSpinner.getSelectedItemPosition());
+        group.put("course", courses.get(CourseSpinner.getSelectedItemPosition()));
         group.put("description", GroupDescInput.getText().toString());
         group.put("name", GroupNameInput.getText().toString());
         group.put("members", user);
-        ProgressIndicator.setProgressCompat(50, true);
+        group.put("memberEmails", finalmemberEmails);
+        group.put("memberIds", finalmemberIds);
+        group.put("messages", messages);
+        //  ProgressIndicator.setProgressCompat(50, true);
 
 
         db.collection("groups")
@@ -235,8 +337,7 @@ public class CreateGroupFragment extends Fragment {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(FRAGMENT_NAME, "DocumentSnapshot added with ID: " + documentReference.getId());
-                        ProgressIndicator.setProgressCompat(100, true);
-
+                        //ProgressIndicator.setProgressCompat(100, true);
 
                     }
                 })
@@ -246,10 +347,57 @@ public class CreateGroupFragment extends Fragment {
                         Log.w(FRAGMENT_NAME, "Error adding document", e);
                     }
                 });
-//        this.getActivity().finish();
-//        startActivity(new Intent(this.getActivity().getApplicationContext(),this.getActivity().getClass()));
-        getActivity().onBackPressed();
         Log.i(FRAGMENT_NAME, "Writing to database completed ");
+        getFragmentManager().popBackStack();
 
+    }
+
+
+    /***
+     * Gets the userId that is passed on and finds the name of the user to add to the list of members
+     * Populates the Course Spinner with the data the user enters
+     *
+     * @param UserId
+     */
+    public void PopulateFormDb(String UserId) {
+        Log.i(FRAGMENT_NAME, " " +  UserId);
+        DocumentReference docRef = db.collection("user").document(UserId);
+
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        user.add ( (String) document.getString("first_name") + " " + document.getString("last_name")) ;
+                        addstudentadapter.notifyItemInserted(user.size());
+                        Log.i(FRAGMENT_NAME, "Courses : " + document.get("courses"));
+
+                        courses.add("None");
+                        ArrayList<String> dbCourses = (ArrayList<String> ) document.get("courses");
+
+                        for (int i =0; i< dbCourses.size(); i++) {
+                            courses.add(dbCourses.get(i));
+                        }
+                        adapter2.notifyDataSetChanged();
+
+
+                    } else {
+                        Log.d(FRAGMENT_NAME, "No such document");
+                    }
+                } else {
+                    Log.d(FRAGMENT_NAME, "get failed with ", task.getException());
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        user.clear();
+        students.clear();
+        // courses.clear();
     }
 }
