@@ -341,7 +341,7 @@ public class GroupFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            //groups.clear();
+                            groups.clear();
 
                             for (DocumentChange document : task.getResult().getDocumentChanges() ) {
                                 String groupName = document.getDocument().getString("name");

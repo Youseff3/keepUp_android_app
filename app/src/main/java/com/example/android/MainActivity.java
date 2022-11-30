@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
-        classButton.performClick(); // Might need to change, this actually loads the first fragment and pases the Bundle info
+     // Might need to change, this actually loads the first fragment and pases the Bundle info
 
         return true;
     }
@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                         .commit();
             }
         });
+        classButton.performClick();
         appointmentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
