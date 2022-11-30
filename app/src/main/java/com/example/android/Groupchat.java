@@ -79,10 +79,10 @@ public class Groupchat extends AppCompatActivity {
             String user = messages[0] + " " + messages[1]+" @"+temp[1];
             String messageString = temp[0];
 
-            String nameofuser = messages[0];
+            String nameofuser = messages[0] + " "  + messages[1];
 
             View result = null;
-            if (nameofuser.compareTo(name) == 0) {
+            if (nameofuser.compareTo(name) != 0) {
                 result = inflater.inflate(R.layout.message_from_user, null);
                 TextView msg = result.findViewById(R.id.message);
                 msg.setText(messageString);
@@ -123,7 +123,8 @@ public class Groupchat extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String message = TextField.getText().toString();
-                messages.add(name + " " + message + "@"+LocalTime.now());
+                LocalTime now=LocalTime.of(LocalTime.now().getHour(),LocalTime.now().getMinute());
+                messages.add(name + " " + message + "@"+now);
                 messageAdapter.notifyDataSetChanged();
                 Texts.smoothScrollToPosition(messages.size()-1);
                 WriteMessagetoDatabase(messages.size(), groupId, name);

@@ -158,8 +158,8 @@ public class AppointmentFragment extends Fragment {
         adapter = new AppointmentFragment.ViewAppointmentAdapter(this.getContext(), 0);
         Appointmentlist.setAdapter(adapter);
         noAppinfo.setText(R.string.noAppAdded);
-        noAppinfo.setVisibility(View.INVISIBLE);
-        Appointmentlist.setVisibility(View.VISIBLE);
+        noAppinfo.setVisibility(View.VISIBLE);
+        Appointmentlist.setVisibility(View.INVISIBLE);
         ImageView refreshBtn=test.findViewById(R.id.refresh);
         refreshBtn.setVisibility(View.INVISIBLE);
 
@@ -217,6 +217,7 @@ public class AppointmentFragment extends Fragment {
                                                             }
 
                                                         }
+
                                                         DisplayRegApps(temp2);
 
                                                     } else {
@@ -311,6 +312,12 @@ public class AppointmentFragment extends Fragment {
     public void DisplayRegApps(ArrayList<ArrayList<String>> studentClasses )
     {
 
+        if (studentClasses.size()>0 )
+        {
+            Appointmentlist.setVisibility(View.VISIBLE);
+            noAppinfo.setVisibility(View.INVISIBLE);
+
+        }
         for (ArrayList<String> app : studentClasses)
         {
             StudentAppointment.add(app);
