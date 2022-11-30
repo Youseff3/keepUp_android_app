@@ -115,6 +115,7 @@ public class Groupchat extends AppCompatActivity {
                 String message = TextField.getText().toString();
                 messages.add(name + " " + message);
                 messageAdapter.notifyDataSetChanged();
+                Texts.smoothScrollToPosition(messages.size()-1);
                 WriteMessagetoDatabase(messages.size(), groupId, name);
 
 
