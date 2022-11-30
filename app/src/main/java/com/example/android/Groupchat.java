@@ -48,6 +48,7 @@ public class Groupchat extends AppCompatActivity {
     String name;
     private Handler RefreshPage = new Handler();
     Runnable RefreshInfoRunnable;
+    String GroupTitle;
 
 
     private class ChatAdapter extends ArrayAdapter<String> {
@@ -96,6 +97,8 @@ public class Groupchat extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groupchat);
+        setTitle("Loading...");
+
         Send = findViewById(R.id.SendButton);
         TextField = findViewById(R.id.EnterMsg);
         Texts = findViewById(R.id.ListArray);
@@ -149,7 +152,8 @@ public class Groupchat extends AppCompatActivity {
                                     if (document.exists()) {
                                         messages.clear();
                                         messages = (ArrayList<String>) document.get("messages");
-
+                                        GroupTitle=(String)document.get("name");
+                                        setTitle(GroupTitle);
                                         if (messages != null) {
                                             messageAdapter.notifyDataSetChanged();
                                         }

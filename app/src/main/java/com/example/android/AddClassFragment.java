@@ -173,6 +173,8 @@ public class AddClassFragment extends Fragment {
                                 String courseName = document.getDocument().getString("code");
                                 String courseSection = document.getDocument().getString("section");
                                 String courseTerm=document.getDocument().getString("term");
+                                String courseTitle=document.getDocument().getString("title");
+
 
                                 if (courseName.substring(2, 3).equals(levelPreference.substring(0,1)) && courseTerm.equals(termPreference) && !courses.contains(courseName+" "+courseSection)) {
                                     allCourses.add(courseName+" "+courseSection);

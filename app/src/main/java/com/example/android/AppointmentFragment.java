@@ -158,6 +158,8 @@ public class AppointmentFragment extends Fragment {
         nogroupinfo.setText(R.string.noAppAdded);
         nogroupinfo.setVisibility(View.INVISIBLE);
         Appointmentlist.setVisibility(View.VISIBLE);
+        ImageView refreshBtn=test.findViewById(R.id.refresh);
+        refreshBtn.setVisibility(View.INVISIBLE);
 
         CardView btn=test.findViewById(R.id.Banner);
         btn.setOnClickListener(new View.OnClickListener() {

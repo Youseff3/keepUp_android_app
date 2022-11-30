@@ -4,11 +4,11 @@
     tools:context="com.example.android.MainActivity">
 
 
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+<!--    <item-->
+<!--        android:id="@+id/action_settings"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="@string/action_settings"-->
+<!--        app:showAsAction="never" />-->
 
     <item
         android:id="@+id/help"
@@ -17,12 +17,12 @@
         app:showAsAction="always"
         android:title="help"/>
 
-    <item
-        android:id="@+id/feedback"
-        android:orderInCategory="200"
-        app:showAsAction="never"
-        android:title="@string/feedback"
-        />
+<!--    <item-->
+<!--        android:id="@+id/feedback"-->
+<!--        android:orderInCategory="200"-->
+<!--        app:showAsAction="never"-->
+<!--        android:title="@string/feedback"-->
+<!--        />-->
 
     <item
         android:id="@+id/Signout"

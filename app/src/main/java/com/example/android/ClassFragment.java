@@ -151,6 +151,8 @@ public class ClassFragment extends Fragment {
         Classlist= test.findViewById(R.id.GroupinformationList);
         TextView nogroupinfo = test.findViewById(R.id.NoGroupinfo);
         TextView addclassBtn= test.findViewById(R.id.BannerText);
+        ImageView refreshBtn=test.findViewById(R.id.refresh);
+        refreshBtn.setVisibility(View.INVISIBLE);
         addclassBtn.setText("Add a class");
         adapter = new ViewClassAdpater(this.getContext(), 0);
         Classlist.setAdapter(adapter);
