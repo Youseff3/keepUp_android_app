@@ -83,6 +83,8 @@ public class EventLayoutActivity extends AppCompatActivity {
         Event newEvent = new Event(eventName, eventDesc,eventCourse,CalendarUtils.selectedDate, time);
         Event.eventsList.add(newEvent);
 
+//        db.collection("courses").
+
         Map<String, Object> appointment = new HashMap<>();
         appointment.put("user",MainActivity.UserId);
         appointment.put("title", eventName);

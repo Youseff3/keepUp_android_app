@@ -34,6 +34,8 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 
 import org.checkerframework.checker.units.qual.A;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +45,7 @@ public class Groupchat extends AppCompatActivity {
     EditText TextField;
     ListView Texts;
     ArrayList<String> messages = new ArrayList<String>();
+
     protected FirebaseFirestore db = FirebaseFirestore.getInstance();
     ChatAdapter messageAdapter;
     String name;
@@ -71,11 +74,15 @@ public class Groupchat extends AppCompatActivity {
             LayoutInflater inflater = Groupchat.this.getLayoutInflater();
             String[] messages = getItem(position).split(" ", 3);
 
-            String user = messages[0] + " " + messages[1];
-            String messageString = messages[2];
+            String[] temp=messages[2].split("@");
+
+            String user = messages[0] + " " + messages[1]+" @"+temp[1];
+            String messageString = temp[0];
+
+            String nameofuser = messages[0];
 
             View result = null;
-            if (user.compareTo(name) != 0) {
+            if (nameofuser.compareTo(name) == 0) {
                 result = inflater.inflate(R.layout.message_from_user, null);
                 TextView msg = result.findViewById(R.id.message);
                 msg.setText(messageString);
@@ -116,11 +123,10 @@ public class Groupchat extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String message = TextField.getText().toString();
-                messages.add(name + " " + message);
+                messages.add(name + " " + message + "@"+LocalTime.now());
                 messageAdapter.notifyDataSetChanged();
                 Texts.smoothScrollToPosition(messages.size()-1);
                 WriteMessagetoDatabase(messages.size(), groupId, name);
-
 
             }
         });
@@ -130,10 +136,11 @@ public class Groupchat extends AppCompatActivity {
 
     public void WriteMessagetoDatabase(int position, String groupid, String name) {
 
-
+        LocalTime now= LocalTime.now();
         db.collection("groups")
                 .document(groupid)
-                .update("messages", FieldValue.arrayUnion(messages.get(position - 1)));
+                .update("messages", FieldValue.arrayUnion(messages.get(position - 1) +" @ "+now));
+
         Toast.makeText(this, "Sent!", Toast.LENGTH_LONG);
         TextField.setText("");
 
@@ -152,6 +159,7 @@ public class Groupchat extends AppCompatActivity {
                                     if (document.exists()) {
                                         messages.clear();
                                         messages = (ArrayList<String>) document.get("messages");
+
                                         GroupTitle=(String)document.get("name");
                                         setTitle(GroupTitle);
                                         if (messages != null) {

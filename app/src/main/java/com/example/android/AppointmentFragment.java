@@ -32,6 +32,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -150,13 +152,13 @@ public class AppointmentFragment extends Fragment {
         StudentAppointment.clear();
         View test=inflater.inflate(R.layout.fragment_group, container, false);
         Appointmentlist= test.findViewById(R.id.GroupinformationList);
-        TextView nogroupinfo = test.findViewById(R.id.NoGroupinfo);
+        noAppinfo = test.findViewById(R.id.NoGroupinfo);
         TextView addAppBtn= test.findViewById(R.id.BannerText);
         addAppBtn.setText("Book an Appointment");
         adapter = new AppointmentFragment.ViewAppointmentAdapter(this.getContext(), 0);
         Appointmentlist.setAdapter(adapter);
-        nogroupinfo.setText(R.string.noAppAdded);
-        nogroupinfo.setVisibility(View.INVISIBLE);
+        noAppinfo.setText(R.string.noAppAdded);
+        noAppinfo.setVisibility(View.INVISIBLE);
         Appointmentlist.setVisibility(View.VISIBLE);
         ImageView refreshBtn=test.findViewById(R.id.refresh);
         refreshBtn.setVisibility(View.INVISIBLE);
@@ -198,8 +200,12 @@ public class AppointmentFragment extends Fragment {
                                                             String course=document.getDocument().getString("course");
                                                             String title=document.getDocument().getString("title");
                                                             String desc=document.getDocument().getString("desc");
+                                                            LocalDate currDate=LocalDate.now();
+                                                            String[] dateInfo=date.split(" ");
+                                                            LocalDate appDate=LocalDate.of(Integer.valueOf(dateInfo[2]),getNumberFromMonthName(dateInfo[1]),Integer.valueOf(dateInfo[0]));
+                                                            Log.i(FRAGMENT_NAME,currDate.toString());
 
-                                                            if(userKey.equals(MainActivity.UserId)){
+                                                            if(userKey.equals(MainActivity.UserId) && (appDate.isAfter(currDate) || appDate.isEqual(currDate))){
                                                                 ArrayList<String> val=new ArrayList<>();
                                                                 val.add(appID);
                                                                 val.add(time);
@@ -331,7 +337,7 @@ public class AppointmentFragment extends Fragment {
                         {
 
 
-//                            noAppinfo.setVisibility(View.VISIBLE);
+                            noAppinfo.setVisibility(View.VISIBLE);
                             Appointmentlist.setVisibility(View.INVISIBLE);
                         }
                         deletefromdatabase(appname, MainActivity.UserId );
@@ -361,5 +367,8 @@ public class AppointmentFragment extends Fragment {
         DocumentReference groupsRef = db.collection("user").document(userID);
         groupsRef.update("appointments", FieldValue.arrayRemove(appointment.get(0)));
 
+    }
+    public static int getNumberFromMonthName(String monthName) {
+        return Month.valueOf(monthName.toUpperCase()).getValue();
     }
 }

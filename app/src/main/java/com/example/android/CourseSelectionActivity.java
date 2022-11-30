@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -53,7 +54,11 @@ public class CourseSelectionActivity extends AppCompatActivity {
     ArrayList<String> levelPref;
     ArrayList<ArrayList<String>> coursePreference;
     ArrayList<String> finalCourses;
+    ArrayList<String> finalCourses2;
+
     ArrayList<String> chosenCourses;
+    ArrayList<String> chosenCourses2;
+
     TextView courseTV;
 
     FirebaseFirestore fc = FirebaseFirestore.getInstance();
@@ -75,7 +80,10 @@ public class CourseSelectionActivity extends AppCompatActivity {
         setTitle("Course Selection");
         courseTV=findViewById(R.id.courseTextView);
         chosenCourses=new ArrayList<String>();
+        chosenCourses2=new ArrayList<String>();
+
         finalCourses=new ArrayList<String>();
+        finalCourses2=new ArrayList<String>();
 //        coursePreference=new ArrayList<String>();
 
         Bundle extras=getIntent().getExtras();
@@ -110,14 +118,18 @@ public class CourseSelectionActivity extends AppCompatActivity {
                                 public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                                     if(checked){
                                         finalCourses.add(switch_buttons[finalX].getText().toString());
+                                        finalCourses2.add(switch_buttons[finalX].getText().toString().split(":")[0]);
                                     }else{
                                         if(finalCourses.contains(switch_buttons[finalX].getText().toString())){
                                             finalCourses.remove(switch_buttons[finalX].getText().toString());
+                                            finalCourses2.remove(switch_buttons[finalX].getText().toString().split(":")[0]);
+
                                         }
                                     }
                                     Log.i(ACTIVITY_NAME,String.valueOf(finalCourses));
                                 }
                             });
+
                         }
 
                     } else {
@@ -373,7 +385,7 @@ public void popCourses(String termPreference,ArrayList<String> levelPreference)
                             ArrayList<String> crs=new ArrayList<String>();
                             String courseName = document.getDocument().getString("code");
 //                            String courseDesc = document.getDocument().getString("description");
-//                            String courseTitle = document.getDocument().getString("title");
+                            String courseTitle = document.getDocument().getString("title");
                             String courseSection = document.getDocument().getString("section");
                             String courseTerm=document.getDocument().getString("term");
 
@@ -390,14 +402,16 @@ public void popCourses(String termPreference,ArrayList<String> levelPreference)
 //                                    crs.add(courseTitle);
 //                                    crs.add(courseDesc);
                                     chosenCourses.add(courseName+" "+courseSection);
+                                    chosenCourses2.add(courseName+" "+courseSection+": "+courseTitle);
+
                                 }
                             }
 
                         }
-                        for (int j=0;j<chosenCourses.size();j++){
+                        for (int j=0;j<chosenCourses2.size();j++){
                             switch_buttons[j]=(Switch)findViewById(idArray[j]);
                             switch_buttons[j].setVisibility(View.VISIBLE);
-                            switch_buttons[j].setText(chosenCourses.get(j));
+                            switch_buttons[j].setText(chosenCourses2.get(j));
                         }
 
                         Log.i(ACTIVITY_NAME,"course pref size: "+String.valueOf(chosenCourses.size()));
@@ -412,7 +426,7 @@ public void popCourses(String termPreference,ArrayList<String> levelPreference)
 
         // Update one field, creating the document if it does not already exist.
         Map<String, Object> users = new HashMap<>();
-        users.put("courses", finalCourses);;
+        users.put("courses", finalCourses2);;
 
         db.collection("user").document(userID)
                 .set(users, SetOptions.merge());

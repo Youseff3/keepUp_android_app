@@ -45,6 +45,8 @@ public class AddClassFragment extends Fragment {
     ArrayList<String> courses;
     ArrayList<String> courseSelection;
     ArrayList<String> allCourses;
+    ArrayList<String> allCourses2;
+
     String termPref;
 
     String chosenCourse;
@@ -162,8 +164,10 @@ public class AddClassFragment extends Fragment {
     public void getAllCourses(String termPreference,String levelPreference,Spinner courseSpinner, ArrayList<String> courses)
     {
         allCourses=new ArrayList<String>();
+        allCourses2=new ArrayList<String>();
+
         Log.i(FRAGMENT_NAME, " IN POPCOURSES");
-        db.collection("courses")
+        db.collection("courses").orderBy("code")
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -178,13 +182,14 @@ public class AddClassFragment extends Fragment {
 
                                 if (courseName.substring(2, 3).equals(levelPreference.substring(0,1)) && courseTerm.equals(termPreference) && !courses.contains(courseName+" "+courseSection)) {
                                     allCourses.add(courseName+" "+courseSection);
+                                    allCourses2.add(courseName+" "+courseSection + ": "+courseTitle);
                                 }
 
                             }
 
                             ArrayAdapter<CharSequence> adapter2 =
                                     new ArrayAdapter( getContext(),
-                                            android.R.layout.simple_spinner_dropdown_item,allCourses);
+                                            android.R.layout.simple_spinner_dropdown_item,allCourses2);
                             courseSpinner.setAdapter(adapter2);
                             courseSpinner.setOnItemSelectedListener(
                                     new AdapterView.OnItemSelectedListener() {
