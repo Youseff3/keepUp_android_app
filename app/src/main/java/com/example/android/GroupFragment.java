@@ -222,6 +222,9 @@ public class GroupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        String title="Groups";
+        getActivity().setTitle(title);
         View test=inflater.inflate(R.layout.fragment_group, container, false);
         GroupLists = test.findViewById(R.id.GroupinformationList);
         nogroupinfo = test.findViewById(R.id.NoGroupinfo);

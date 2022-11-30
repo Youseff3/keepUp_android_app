@@ -145,6 +145,8 @@ public class AppointmentFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+        String title="Appointments";
+        getActivity().setTitle(title);
         StudentAppointment.clear();
         View test=inflater.inflate(R.layout.fragment_group, container, false);
         Appointmentlist= test.findViewById(R.id.GroupinformationList);

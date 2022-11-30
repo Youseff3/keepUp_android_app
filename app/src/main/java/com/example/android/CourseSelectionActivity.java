@@ -65,7 +65,7 @@ public class CourseSelectionActivity extends AppCompatActivity {
             R.id.courseBtn11,R.id.courseBtn12, R.id.courseBtn13,R.id.courseBtn14,R.id.courseBtn15,R.id.courseBtn16,R.id.courseBtn17,R.id.courseBtn18,R.id.courseBtn19,R.id.courseBtn20,
             R.id.courseBtn21,R.id.courseBtn22, R.id.courseBtn23,R.id.courseBtn24,R.id.courseBtn25,R.id.courseBtn26, R.id.courseBtn27,R.id.courseBtn28,R.id.courseBtn29,R.id.courseBtn30,
             R.id.courseBtn31,R.id.courseBtn32,R.id.courseBtn33,R.id.courseBtn34,R.id.courseBtn35,R.id.courseBtn36,R.id.courseBtn37,R.id.courseBtn38, R.id.courseBtn39,R.id.courseBtn40,
-            R.id.courseBtn41,R.id.courseBtn42,R.id.courseBtn43};
+            R.id.courseBtn41,R.id.courseBtn42,R.id.courseBtn43,R.id.courseBtn44,R.id.courseBtn45,R.id.courseBtn46};
     private Switch[] switch_buttons=new Switch[idArray.length];
 
     @Override
@@ -365,7 +365,7 @@ public void popCourses(String termPreference,ArrayList<String> levelPreference)
 {
     Log.i(ACTIVITY_NAME, " IN POPCOURSES");
     db.collection("courses")
-            .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            .orderBy("code").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {

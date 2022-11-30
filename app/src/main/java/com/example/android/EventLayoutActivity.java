@@ -45,6 +45,8 @@ public class EventLayoutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_layout);
+
+        setTitle("Book Appointment");
         Bundle extras=getIntent().getExtras();
 
         tempTime=extras.getString("time");

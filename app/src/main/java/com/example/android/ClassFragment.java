@@ -144,6 +144,8 @@ public class ClassFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+        String title="Classes";
+        getActivity().setTitle(title);
         Studentclass.clear();
         View test=inflater.inflate(R.layout.fragment_group, container, false);
         Classlist= test.findViewById(R.id.GroupinformationList);

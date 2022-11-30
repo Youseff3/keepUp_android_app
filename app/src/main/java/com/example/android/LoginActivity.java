@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        setTitle("Registration");
+        setTitle("KeepUp!");
 
         mAuth = FirebaseAuth.getInstance();
         Log.i(ACTIVITY_NAME,"In OnCreate()");
@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (email.compareTo("") == 0 || password.compareTo("") == 0 )
         {
-            usernameET.setError("Please ensure all forms are completed ");
+            usernameET.setError("Please input the email and password.");
         }
         else {
             mAuth.signInWithEmailAndPassword(email, password)

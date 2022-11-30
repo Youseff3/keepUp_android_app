@@ -55,35 +55,37 @@ public class RegisterActivity extends AppCompatActivity {
         EditText confirmPasswordET = findViewById(R.id.passwordConfirmationtext);
         String confirmPassword = confirmPasswordET.getText().toString();
 
+        if (validateRegistration(firstName,lastName,email,password,confirmPassword)){
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d(ACTIVITY_NAME, "createUserWithEmail:success");
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                String userID = user.getUid();
 
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(ACTIVITY_NAME, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            String userID = user.getUid();
+                                CollectionReference users = db.collection("user");
 
-                            CollectionReference users = db.collection("user");
+                                Map<String, Object> currUser = new HashMap<>();
+                                currUser.put("first_name", firstName);
+                                currUser.put("last_name", lastName);
+                                currUser.put("email", email);
+                                users.document(userID).set(currUser);
 
-                            Map<String, Object> currUser = new HashMap<>();
-                            currUser.put("first_name", firstName);
-                            currUser.put("last_name", lastName);
-                            currUser.put("email", email);
-                            users.document(userID).set(currUser);
-
-                            updateUI(user, userID);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(ACTIVITY_NAME, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                                updateUI(user, userID);
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w(ACTIVITY_NAME, "createUserWithEmail:failure", task.getException());
+                                Toast.makeText(RegisterActivity.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
 
-                });
+                    });
+        }
+
     }
 
     private void updateUI(FirebaseUser user, String userID) {
@@ -103,41 +105,41 @@ public class RegisterActivity extends AppCompatActivity {
 //        return password_check.matches();
 //    }
 
-//    public Boolean validateEmail(String email){
-//        String[] emailArray=email.split("@");
-//        String laurierDomain="mylaurier.ca";
-//        if(TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-//            return false;
-//        }else if(!emailArray[1].equals(laurierDomain)){
-//            return false;
-//        }else{
-//            return true;
-//        }
-//    }
+    public Boolean validateEmail(String email){
+        String[] emailArray=email.split("@");
+        String laurierDomain="mylaurier.ca";
+        if(TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            return false;
+        }else if(!emailArray[1].equals(laurierDomain)){
+            return false;
+        }else{
+            return true;
+        }
+    }
 
-//    public Boolean validateRegistration(String firstName,String lastName,String email, String password,String password2){
-//        if(TextUtils.isEmpty(firstName)){
-//            Toast.makeText(RegisterActivity.this, R.string.fName_error_message, Toast.LENGTH_SHORT).show();
-//            return false;
-//        }else if(TextUtils.isEmpty(lastName)){
-//            Toast.makeText(RegisterActivity.this, R.string.lName_error_message, Toast.LENGTH_SHORT).show();
-//            return false;
-//        }else if(!validateEmail(email)){
-//            Toast.makeText(RegisterActivity.this,R.string.email_error_message, Toast.LENGTH_SHORT).show();
-//            return false;
-//        }else if (TextUtils.isEmpty(password) || TextUtils.isEmpty(password2)) {
-//            Toast.makeText(RegisterActivity.this, R.string.reg_psswrd_error_message, Toast.LENGTH_SHORT).show();
-//            return false;
+    public Boolean validateRegistration(String firstName,String lastName,String email, String password,String password2){
+        if(TextUtils.isEmpty(firstName)){
+            Toast.makeText(RegisterActivity.this, R.string.fName_error_message, Toast.LENGTH_SHORT).show();
+            return false;
+        }else if(TextUtils.isEmpty(lastName)){
+            Toast.makeText(RegisterActivity.this, R.string.lName_error_message, Toast.LENGTH_SHORT).show();
+            return false;
+        }else if(!validateEmail(email)){
+            Toast.makeText(RegisterActivity.this,R.string.email_error_message, Toast.LENGTH_SHORT).show();
+            return false;
+        }else if (TextUtils.isEmpty(password) || TextUtils.isEmpty(password2)) {
+            Toast.makeText(RegisterActivity.this, R.string.reg_psswrd_error_message, Toast.LENGTH_SHORT).show();
+            return false;
 //        }else if(!validatePassword(password)){
 //            Toast.makeText(RegisterActivity.this, R.string.regEx_psswrd_error_message, Toast.LENGTH_SHORT).show();
 //            return false;
-//        }else if (!password.equals(password2)){
-//            Toast.makeText(RegisterActivity.this, R.string.confirm_password_error_message,Toast.LENGTH_SHORT).show();
-//            return false;
-//        }else{
-//            return true;
-//        }
-//    }
+        }else if (!password.equals(password2)){
+            Toast.makeText(RegisterActivity.this, R.string.confirm_password_error_message,Toast.LENGTH_SHORT).show();
+            return false;
+        }else{
+            return true;
+        }
+    }
 //    public String encryptHmacSha256(String key, String s) {
 //        byte[] message=s.getBytes(StandardCharsets.UTF_8);
 //        byte[] secretKey=key.getBytes(StandardCharsets.UTF_8);
