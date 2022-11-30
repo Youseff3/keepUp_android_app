@@ -1,6 +1,7 @@
 package com.example.android;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
@@ -22,11 +24,13 @@ import java.util.ArrayList;
 public class RecyclerViewAdapter_AddStudent extends  RecyclerView.Adapter<RecyclerViewAdapter_AddStudent.MyViewHolder> {
     Context ctx;
     ArrayList<String> addStudent;
+    int id ;
 
-    public RecyclerViewAdapter_AddStudent(Context ctx, ArrayList<String> addstudent )
+    public RecyclerViewAdapter_AddStudent(Context ctx, ArrayList<String> addstudent, int id)
     {
         this.ctx = ctx;
         this.addStudent = addstudent;
+        this.id = id;
     }
     @NonNull
     @Override
@@ -35,7 +39,7 @@ public class RecyclerViewAdapter_AddStudent extends  RecyclerView.Adapter<Recycl
         //Can take in inflater as custom input
         View view = inflater.inflate(R.layout.users_layout_form, parent, false);
 
-        return new RecyclerViewAdapter_AddStudent.MyViewHolder(view);
+        return new RecyclerViewAdapter_AddStudent.MyViewHolder(view, id );
     }
 
 
@@ -57,15 +61,38 @@ public class RecyclerViewAdapter_AddStudent extends  RecyclerView.Adapter<Recycl
         Chip chipview;
 
 
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull View itemView, int id ) {
             super(itemView);
             chipview = itemView.findViewById(R.id.AddGroup);
-            chipview.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    CreateGroupFragment.DeleteEntry(view);
-                }
-            });
+            if (id ==1 ) {
+                chipview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        CreateGroupFragment.DeleteEntry(view);
+                    }
+                });
+            }
+            else if (id == 2)
+            {
+                chipview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        AlertDialog.Builder builder =
+                                new AlertDialog.Builder(view.getContext());
+                        builder.setTitle("Student name: " + chipview.getText());
+                        builder.setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                    } });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                    }
+                });
+            }
+
 
         }
     }

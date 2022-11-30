@@ -81,6 +81,8 @@ To get started you can click on the create a group button, this will take you to
         Once a group has been created, you can either edit your group, remove yourself from the group or check out more details by clicking on the group.
 
     Feel free to explore around the Groups Feature!</string>
+<!--    <string name="AppointmentParagraph">The appointments feature gives you the abilty to book appointments with instructors,
+    click on a new appointment followed by your </string>-->
     <!-- Menu items Strings.xml End  -->
 
     <!-- Main Activity Strings.xml Start -->

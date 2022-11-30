@@ -60,14 +60,11 @@ public class CreateGroupFragment extends Fragment {
     protected LinearProgressIndicator ProgressIndicator;
     protected EditText GroupNameInput;
     protected EditText GroupDescInput;
-    private  int indexremoved;
 
     protected static HashMap removeditems =new HashMap<String, String>();
 
 
-    protected  ArrayList<String> memberEmails = new ArrayList<>();
     protected static ArrayList<String> memberIds = new ArrayList<>();
-    protected ArrayList<MembersInfo> testmemberidsremoved = new ArrayList<MembersInfo>();
 
     protected  ArrayList<String> finalmemberEmails = new ArrayList<>();
     protected  static ArrayList<String> finalmemberIds = new ArrayList<>();
@@ -141,7 +138,7 @@ public class CreateGroupFragment extends Fragment {
         CourseSpinner = inflated_view.findViewById(R.id.CourseSpinner);
         AddButton = inflated_view.findViewById(R.id.AddButton);
         StudentList = inflated_view.findViewById(R.id.UsersAdd);
-        addstudentadapter = new RecyclerViewAdapter_AddStudent(this.getContext(),user );
+        addstudentadapter = new RecyclerViewAdapter_AddStudent(this.getContext(),user , 1);
 //        ProgressIndicator = inflated_view.findViewById(R.id.ProgressIndicator);
         GroupNameInput = inflated_view.findViewById(R.id.TextGroupName);
         GroupDescInput = inflated_view.findViewById(R.id.GroupDescInput);

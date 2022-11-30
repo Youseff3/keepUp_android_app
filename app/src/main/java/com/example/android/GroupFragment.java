@@ -19,6 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -68,8 +70,8 @@ public class GroupFragment extends Fragment {
     protected static final String FRAGMENT_NAME="GroupFragment";
     protected static int colorIcon[] = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW};
 
-    private static final int[] memberchip={R.id.Chip1,R.id.Chip2,R.id.Chip3, R.id.Chip4};
-    private final Chip[] switch_buttons=new Chip[memberchip.length];
+    //private static final int[] memberchip={R.id.Chip1,R.id.Chip2,R.id.Chip3, R.id.Chip4};
+    //private final Chip[] switch_buttons=new Chip[memberchip.length];
     //private  Button EmailInstrucorBtn;
     private ViewGroupsAdapter adapter;
     private ArrayList<GroupsInformation> groups = new ArrayList<GroupsInformation>();
@@ -89,6 +91,8 @@ public class GroupFragment extends Fragment {
     private  Dialog dialog;
     private Button StartChatBtn;
     private  String name;
+    protected static RecyclerViewAdapter_AddStudent addstudentadapter;
+    protected RecyclerView StudentList;
 
     private static class GroupsInformation
     {
@@ -431,14 +435,19 @@ public class GroupFragment extends Fragment {
         GroupName = views.findViewById(R.id.ViewGroupName);
         TextView GroupDesc = views.findViewById(R.id.ViewGroupDesc);
         TextView CourseName  = views.findViewById(R.id.ViewGroupInstructor);
+        addstudentadapter = new RecyclerViewAdapter_AddStudent(this.getContext(),group.getMembers() , 2);
+        StudentList = views.findViewById(R.id.RecyclerViewmembers);
+        StudentList.setAdapter(addstudentadapter);
+        StudentList.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        for (int i =0; i < (group.getMembers().size()); i++)
+
+ /*       for (int i =0; i < (group.getMembers().size()); i++)
         {
             switch_buttons[i]= views.findViewById(memberchip[i]);
             switch_buttons[i].setVisibility(View.VISIBLE);
             switch_buttons[i].setText(group.getMembers().get(i));
 
-        }
+        }*/
 
 
         GroupName.setText(group.getNameofGroup());

@@ -93,52 +93,17 @@
             app:layout_constraintTop_toBottomOf="@+id/ViewGroupDesc" />
 
 
-        <TableLayout
-            android:id="@+id/linearLayout2"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/RecyclerViewmembers"
             android:layout_width="match_parent"
-            android:layout_height="62dp"
+            android:layout_height="wrap_content"
             android:gravity="center"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ViewGroupMembersLabel">
-
-            <TableRow android:layout_margin="10dp">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/Chip1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="First User"
-                    android:visibility="invisible" />
+            app:layout_constraintTop_toBottomOf="@+id/ViewGroupMembersLabel"/>
 
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/Chip2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Second User"
-
-                    android:visibility="invisible" />
-
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/Chip3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Third User"
-
-                    android:visibility="invisible" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/Chip4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Third User"
-                    android:visibility="invisible" />
-
-            </TableRow>
-        </TableLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout6"
@@ -147,9 +112,9 @@
             android:layout_margin="10dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/linearLayout2"
-            app:layout_constraintStart_toStartOf="@+id/linearLayout2"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+            app:layout_constraintEnd_toEndOf="@+id/RecyclerViewmembers"
+            app:layout_constraintStart_toStartOf="@+id/RecyclerViewmembers"
+            app:layout_constraintTop_toBottomOf="@+id/RecyclerViewmembers"
             app:layout_constraintVertical_bias="0.077">
 
             <com.google.android.material.button.MaterialButton
@@ -177,7 +142,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/linearLayout6"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+            app:layout_constraintTop_toBottomOf="@+id/RecyclerViewmembers"
             app:srcCompat="@android:drawable/sym_action_chat"
             app:tint="@color/green"/>
 
