@@ -60,11 +60,17 @@ public class CreateGroupFragment extends Fragment {
     protected LinearProgressIndicator ProgressIndicator;
     protected EditText GroupNameInput;
     protected EditText GroupDescInput;
+    private  int indexremoved;
+
+    protected static HashMap removeditems =new HashMap<String, String>();
+
+
     protected  ArrayList<String> memberEmails = new ArrayList<>();
-    protected  ArrayList<String> memberIds = new ArrayList<>();
+    protected static ArrayList<String> memberIds = new ArrayList<>();
+    protected ArrayList<MembersInfo> testmemberidsremoved = new ArrayList<MembersInfo>();
 
     protected  ArrayList<String> finalmemberEmails = new ArrayList<>();
-    protected  ArrayList<String> finalmemberIds = new ArrayList<>();
+    protected  static ArrayList<String> finalmemberIds = new ArrayList<>();
     protected static RecyclerViewAdapter_AddStudent addstudentadapter;
     protected static ArrayAdapter<CharSequence> adapter;
     protected  ArrayAdapter<CharSequence> adapter2;
@@ -102,6 +108,16 @@ public class CreateGroupFragment extends Fragment {
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
+    }
+    private class MembersInfo
+    {
+        String name;
+        String id;
+        public MembersInfo(String name, String id )
+        {
+            this.name = name;
+            this.id = id;
+        }
     }
 
     @Override
@@ -162,6 +178,9 @@ public class CreateGroupFragment extends Fragment {
                 //  finalmemberEmails.clear();
                 memberIds.clear();
                 finalmemberIds.clear();
+
+                removeditems.clear();
+
                 Log.i(FRAGMENT_NAME, " This is the final member size " + finalmemberIds.size());
                 memberIds.add("None");
                 students.add("None");
@@ -190,6 +209,7 @@ public class CreateGroupFragment extends Fragment {
                                         if (!document.getId().equals(UserId))
                                         {
                                             memberIds.add(document.getId());
+                                            //testmemberids.add( new MembersInfo(name, document.getId()));
 
                                         }
                                         if (name.compareTo(user.get(0)) != 0 ) {
@@ -246,7 +266,11 @@ public class CreateGroupFragment extends Fragment {
                 Log.i(FRAGMENT_NAME, " THis is the member Id " + memberIds.get(spinner_position));
                 // finalmemberEmails.add(memberEmails.get(spinner_position));
 
+                removeditems.put(students.get(spinner_position), memberIds.get(spinner_position));
+
+
                 students.remove(StudentSpinner.getSelectedItemPosition());
+
                 memberIds.remove(spinner_position);
                 adapter.notifyDataSetChanged();
 
@@ -293,12 +317,24 @@ public class CreateGroupFragment extends Fragment {
         Chip elementDelete = (Chip) (view);
         String element  = elementDelete.getText().toString();
         boolean removed = false;
+
         int i = 0 ;
         Log.i(FRAGMENT_NAME, element);
 
         while(!removed && i< user.size()) {
             if (user.get(i).compareTo(elementDelete.getText().toString()) == 0 && i!=0) {
                 students.add(user.get(i));
+                String removeditem = (String) removeditems.get(user.get(i));
+                memberIds.add(removeditem);
+
+                for (int j = 0; j< finalmemberIds.size(); j++)
+                {
+                    if (finalmemberIds.get(j).equals(removeditem))
+                    {
+                        finalmemberIds.remove(j);
+                    }
+                }
+                removeditems.remove(user.get(i));
                 user.remove(i);
 
                 removed = true;

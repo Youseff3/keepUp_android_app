@@ -88,6 +88,7 @@ public class GroupFragment extends Fragment {
     private  AlertDialog.Builder customDialog;
     private  Dialog dialog;
     private Button StartChatBtn;
+    private  String name;
 
     private static class GroupsInformation
     {
@@ -261,6 +262,25 @@ public class GroupFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(UserID);
             mParam2 = getArguments().getString(username);
+            DocumentReference docRef = db.collection("user").document(mParam1);
+
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            name =  (String) document.getString("first_name") + " " + document.getString("last_name") ;
+
+                        } else {
+                            Log.d(FRAGMENT_NAME, "No such document");
+                        }
+                    } else {
+                        Log.d(FRAGMENT_NAME, "get failed with ", task.getException());
+                    }
+                }
+            });
+
         }
     }
 
@@ -590,7 +610,8 @@ public class GroupFragment extends Fragment {
                             GroupLists.setVisibility(View.INVISIBLE);
                         }
                         Log.i(FRAGMENT_NAME, "This is the user: " + mParam2);
-                        deletefromdatabase(groupdel.getid(), mParam2 ); //TODO: change mparam2 to username
+
+                        deletefromdatabase(groupdel.getid(), name ); //TODO: change mparam2 to username
                     } });
         builder.setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {
@@ -607,16 +628,11 @@ public class GroupFragment extends Fragment {
      * @param groupid : Instance id of the group
      * @param username : Name of the user who wants to be removed
      */
-    public void deletefromdatabase(String groupid, String username)
-    {
+    public void deletefromdatabase(String groupid, String username) {
         DocumentReference groupsRef = db.collection("groups").document(groupid);
         Log.i(FRAGMENT_NAME, "Group id " + groupid + " username " + username);
         groupsRef.update("members", FieldValue.arrayRemove(username));
-
-
-        /***
-         * TODO before final submission: Check if the group has only one member, delete the document if so
-         */
+        groupsRef.update("memberIds", FieldValue.arrayRemove(mParam1));
     }
 
 
@@ -628,7 +644,7 @@ public class GroupFragment extends Fragment {
     public void RefreshPage(View view)
     {
         Toast.makeText(getActivity(), "Page refreshed ", Toast.LENGTH_SHORT).show();
-        DisplayGroupInfo(mParam2);
+        DisplayGroupInfo(mParam1);
     }
 
     /**
