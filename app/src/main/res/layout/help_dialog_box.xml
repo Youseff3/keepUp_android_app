@@ -15,39 +15,33 @@
 
     >
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:src="@drawable/help_icon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
+            android:src="@drawable/help_icon">
 
         </ImageView>
 
         <TextView
             android:id="@+id/Help"
-            android:textFontWeight="700"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-black"
             android:gravity="center"
             android:text="How to use the app "
-            android:textStyle="bold"
+            android:textFontWeight="700"
             android:textSize="30sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView2"
-            app:layout_constraintVertical_bias="0.051" />
+            android:textStyle="bold"
+ />
 
 
         <TextView
@@ -57,47 +51,50 @@
             android:gravity="center"
             android:text="Classes Feature"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Help"
-            app:layout_constraintVertical_bias="0.028" />
+ />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+
+            android:text="@string/CoursesParagraph"
+            app:layout_constraintBottom_toTopOf="@+id/AppointmentsTitle"
+            tools:layout_editor_absoluteX="-16dp" />
 
         <TextView
             android:id="@+id/AppointmentsTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textStyle="bold"
-
             android:text="Appointments Feature "
 
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ViewGroupInstructor"
-            app:layout_constraintVertical_bias="0.158" />
+            android:textStyle="bold"
+ />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:text="@string/AppointmentParagraph"
+/>
 
         <TextView
             android:id="@+id/GroupsTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textStyle="bold"
-
             android:text="Groups Feature "
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/AppointmentsTitle" />
+            android:textStyle="bold"
+/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/GroupsParagraph"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/GroupsTitle"
-            app:layout_constraintVertical_bias="0.11"
             android:gravity="left"
-            tools:layout_editor_absoluteX="-16dp" />
+            android:text="@string/GroupsParagraph" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </com.google.android.material.card.MaterialCardView>

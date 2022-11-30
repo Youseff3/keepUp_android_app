@@ -77,8 +77,12 @@
     <!-- Menu items Strings.xml Start -->
     <string name="feedback"> Leave Feedback on app</string>
     <string name="GroupsParagraph">The groups feature is the hub of where you can interact with other students in the same class as you. This can allow you to add fellow students across classes, organize you group and email your instructor or other group members. To get started you can click on the create a group button, this will take you to a user form to fill out all relevant information. Once a group has been created, you can either edit your group, remove yourself from the group or check out more details by clicking on the group.Feel free to explore around the Groups Feature!</string>
-<!--    <string name="AppointmentParagraph">The appointments feature gives you the abilty to book appointments with instructors,
-    click on a new appointment followed by your </string>-->
+    <string name="AppointmentParagraph">In the appointments section you can interact with your educator. Here you can book and cancel appointments for you and your group.
+To get started select your course from the top drop-down button you would like to book an appointment for. Then scroll to a day you would like and click on the book appointment button. There you will be see a page where you can select a time for your appointment. When you are finished press the finished button.
+You are also able to cancel an appointment view the full list of appointments you have. Feel free to explore around the Appointments Feature!</string>
+
+    <string name="CoursesParagraph">The courses section is your one stop shop to explore all the course offerings your school has. This is the core of the app, dictating the groups, students, and educators you are able to interact with.
+To get started click on add a course to bring in additional classes for you to interact with. This will take you to a page where you can select a course by year level.You are also able to remove yourself from a course and view the full list of courses you are enrolled in. Feel free to explore around the Courses Feature!</string>
     <!-- Menu items Strings.xml End  -->
 
     <!-- Main Activity Strings.xml Start -->
