@@ -17,7 +17,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-
+/**
+ * This Activity setups up a view to act as the "Login" screen
+ */
 public class LoginActivity extends AppCompatActivity {
     protected static final String ACTIVITY_NAME="LoginActivity";
     private FirebaseAuth mAuth;
@@ -25,6 +27,11 @@ public class LoginActivity extends AppCompatActivity {
     private  EditText passwordET;
 
 
+    /**
+     * Sets up the view for {@link LoginActivity}, grabs the firebase authorization instance and
+     * stores it in {@link LoginActivity#mAuth}
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +44,9 @@ public class LoginActivity extends AppCompatActivity {
         passwordET=(EditText) findViewById(R.id.passwordtext);
     }
 
+    /**
+     * Calls the super {@code onStart()} and gets the logged in user
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -52,6 +62,11 @@ public class LoginActivity extends AppCompatActivity {
 ////        startActivity(intent);
 //    }
 
+    /**
+     * Attempts to sign in the user based on their inputted username and password, so long as they're
+     * not empty
+     * @param view
+     */
     public void logInAction(View view){
         usernameET = (EditText) findViewById(R.id.usernametext);
         String email = usernameET.getText().toString();
@@ -88,6 +103,11 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Switches the view and passes the {@code userID} to {@link MainActivity}
+     * @param user unused
+     * @param userID {@link String} user ID to be passed to {@link MainActivity}
+     */
     private void updateUI(FirebaseUser user, String userID) {
 
         Intent intent=new Intent(LoginActivity.this,MainActivity.class);
@@ -96,12 +116,21 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-
+    /**
+     * Switches the view to {@link RegisterActivity}
+     * @param view
+     */
     public void goToRegisterActivity(View view){
         Intent intent=new Intent(LoginActivity.this,RegisterActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Calls the super {@code onActivityResult()} and calls {@link LoginActivity#SignUserOut()}
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -109,13 +138,19 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Does nothing
+     */
     public void SignUserOut()
     {
 
     }
 
-
-
+    /**
+     * Sends a reset password email to the inputted email so long as the email
+     * is not empty and the email is associated with an account
+     * @param view
+     */
     public void ForgotPassword(View view)
     {
 

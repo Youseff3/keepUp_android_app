@@ -15,11 +15,28 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Subclass of {@link ArrayAdapter} to be attached to {@link List}s that contains {@link HourEvent}s
+ */
 public class HourAdapter extends ArrayAdapter<HourEvent> {
+    /**
+     * Call super's constructor with given parameters
+     * @param context
+     * @param hourEvents {@link List} to apply the adapter to
+     */
     public HourAdapter(@NonNull Context context, List<HourEvent> hourEvents) {
         super(context, 0, hourEvents);
     }
 
+    /**
+     * Sets the hour and events of {@code convertView} based on the {@code position} in the list
+     * the adapter is attached to. If no {@code convertView} is provided, one will be created from
+     * {@link R.layout#hour_cell}
+     * @param position  {@link Integer} index into the list the adapter is attached to
+     * @param convertView {@link View} to set the contents of
+     * @param parent The parent {@link ViewGroup} of the {@code convertView}
+     * @return
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent)
@@ -35,12 +52,22 @@ public class HourAdapter extends ArrayAdapter<HourEvent> {
         return convertView;
     }
 
+    /**
+     * Sets the time of the {@link TextView} in {@code convertView}
+     * @param convertView {@link View} to set contents of
+     * @param time {@link LocalTime} time to set the {@link TextView}s contents to
+     */
     private void setHour(View convertView, LocalTime time)
     {
         TextView timeTV = convertView.findViewById(R.id.timeTV);
         timeTV.setText(CalendarUtils.formattedShortTime(time));
     }
 
+    /**
+     * Sets the events of the {@link TextView}s in {@code convertView}
+     * @param convertView {@link View} to set contents of
+     * @param events {@link ArrayList} of {@link Event}s to set the {@link TextView}s contents to
+     */
     private void setEvents(View convertView, ArrayList<Event> events)
     {
         TextView event1 = convertView.findViewById(R.id.event1);
@@ -78,11 +105,20 @@ public class HourAdapter extends ArrayAdapter<HourEvent> {
         }
     }
 
+    /**
+     * Sets the event of the {@link TextView}
+     * @param textView {@link TextView} to set contents of
+     * @param event {@link Event} to set the {@code textView}s contents to
+     */
     private void setEvent(TextView textView, Event event) {
         textView.setText(event.getName());
         textView.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Make the given text view invisible
+     * @param tv {@link TextView} to be made invisible
+     */
     private void hideEvent(TextView tv)
     {
         tv.setVisibility(View.INVISIBLE);

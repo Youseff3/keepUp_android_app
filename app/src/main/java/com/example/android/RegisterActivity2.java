@@ -51,6 +51,10 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import javax.net.ssl.HttpsURLConnection;
 
+/**
+ * This Activity setups up a view to act as the "Registration" screen
+ * for selecting course level, year and term
+ */
 public class RegisterActivity2 extends AppCompatActivity {
     protected static final String ACTIVITY_NAME="Register2Activity";
     List<String> termList;
@@ -70,6 +74,10 @@ public class RegisterActivity2 extends AppCompatActivity {
     private static final int[] idArray2={R.id.levelBtn1,R.id.levelBtn2,R.id.levelBtn3,R.id.levelBtn4};
     private Switch[] level_switch_buttons=new Switch[idArray2.length];
 
+    /**
+     * Sets up the registration view for selecting course level for the user.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,6 +168,12 @@ public class RegisterActivity2 extends AppCompatActivity {
         });
 
     }
+
+    /**
+     * Creates an {@link ArrayAdapter} to attach to {@code yearSpinner} to register the years
+     * selected from {@code yearSpinner}
+     * @param yearSpinner {@link Spinner} to display selectable years
+     */
     public void get_a_year(Spinner yearSpinner) {
 //        Log.i(ACTIVITY_NAME,"get a year");
         yearList = Arrays.asList(getResources().getStringArray(R.array.years_list));
@@ -180,6 +194,13 @@ public class RegisterActivity2 extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Creates an {@link ArrayAdapter} to attach to {@code termSpinner} to register the term
+     * selected by {@code termSpinner}
+     * @param levelTV  A {@link TextView} that is set to visible
+     * @param termTV unused
+     * @param termSpinner {@link Spinner} to be populated with terms
+     */
     public void get_a_term(TextView levelTV,TextView termTV,Spinner termSpinner) {
 //        termList = Arrays.asList(getResources().getStringArray(R.array.terms_list));
         levelList = Arrays.asList(getResources().getStringArray(R.array.levels_list));
@@ -207,8 +228,19 @@ public class RegisterActivity2 extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Subclass of {@link AsyncTask} that deals with retrieving and displaying information from
+     * Lauriers website
+     */
     public class GetAllContent extends AsyncTask<String,Integer,String> {
         String contents;
+
+        /**
+         * Converts {@code is} to a {@link String}
+         * @param is {@link InputStream} to be converted
+         * @return {@link String} converted stream
+         * @throws UnsupportedEncodingException
+         */
         private String convertStreamToString(InputStream is) throws UnsupportedEncodingException {
             Log.i(ACTIVITY_NAME,"check2");
 
@@ -230,6 +262,11 @@ public class RegisterActivity2 extends AppCompatActivity {
             }
             return sb.toString();
         }
+
+        /**
+         * Parses contents of {@code contents} and stores them in {@link RegisterActivity2#termList}
+         * @param contents {@link String} to be parsed
+         */
         public void getAllTerms(String contents){
             termList=new ArrayList<String>();
             Document doc = Jsoup.parse(contents);
@@ -243,6 +280,12 @@ public class RegisterActivity2 extends AppCompatActivity {
                 i++;
             }
         }
+
+        /**
+         * Parses contents of {@link GetAllContent#contents} and displays them in
+         * {@link RegisterActivity2#termSpin}
+         * @param a unused
+         */
         @Override
         protected void onPostExecute(String a) {
             Log.i(ACTIVITY_NAME,"we out here");
@@ -251,6 +294,13 @@ public class RegisterActivity2 extends AppCompatActivity {
             termSpin.setVisibility(View.VISIBLE);
             get_a_term(levelTV,termTV,termSpin);
         }
+
+        /**
+         * Retrieves input stream of courses from Laurier website and attempts to store them
+         * in {@link GetAllContent#contents} by calling {@link GetAllContent#convertStreamToString(InputStream)}
+         * @param strings unused
+         * @return
+         */
         @Override
         protected String doInBackground(String... strings) {
             try{
@@ -282,6 +332,11 @@ public class RegisterActivity2 extends AppCompatActivity {
         }
     }
 
+    /**
+     * Stores {@link RegisterActivity2#yearPreference}, {@link RegisterActivity2#termPreference} and
+     * {@link RegisterActivity2#levelPreference} in database. Then calls {@link RegisterActivity2#updateUI(String)}
+     * @param view
+     */
     public void goToCourseSelection(View view){
 
         // Update one field, creating the document if it does not already exist.
@@ -304,6 +359,11 @@ public class RegisterActivity2 extends AppCompatActivity {
 //        intent.putExtra("level",levelPreference);
 //        startActivity(intent);
 //    }
+
+    /**
+     * Switches view and passes {@code userID} to {@link CourseSelectionActivity}
+     * @param userID {@link String} user identifier to be passed
+     */
     private void updateUI(String userID) {
 
         Intent intent=new Intent(RegisterActivity2.this,CourseSelectionActivity.class);

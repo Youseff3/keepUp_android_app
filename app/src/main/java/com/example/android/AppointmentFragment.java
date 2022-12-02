@@ -42,6 +42,8 @@ import java.util.Map;
  * A simple {@link Fragment} subclass.
  * Use the {@link AppointmentFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *
+ * This fragment provides a View to view appointments
  */
 public class AppointmentFragment extends Fragment {
     protected static final String FRAGMENT_NAME="AppointmentFragment";
@@ -66,6 +68,9 @@ public class AppointmentFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    /**
+     * Required empty public constructor
+     */
     public AppointmentFragment() {
         // Required empty public constructor
     }
@@ -88,16 +93,32 @@ public class AppointmentFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * An {@link ArrayAdapter} subclass that implements {@link ViewAppointmentAdapter#getCount()}
+     * and {@link ViewAppointmentAdapter#getView(int, View, ViewGroup)} methods
+     */
     private class ViewAppointmentAdapter extends ArrayAdapter<String> {
         public ViewAppointmentAdapter(@NonNull Context context, int resource) {
             super(context, resource);
         }
 
+        /**
+         * Gets the number of appointments the user has scheduled
+         * @return {@link Integer} of appointments user has scheduled
+         */
         public int getCount() {
             return StudentAppointment.size();
         }
 
-
+        /**
+         * Inflates {@link R.layout#group_list_view} and adjusts contents (titles, button text, etc...)
+         * accordingly with appointment related content.
+         *
+         * @param position
+         * @param convertView
+         * @param parent
+         * @return Inflated view
+         */
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater inflater = AppointmentFragment.this.getLayoutInflater();
             View result = inflater.inflate(R.layout.group_list_view, null);
@@ -133,6 +154,11 @@ public class AppointmentFragment extends Fragment {
 
     }
 
+    /**
+     * Stores fragment parameters in {@link AppointmentFragment#mParam1}
+     * and {@link AppointmentFragment#mParam2}
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,6 +168,14 @@ public class AppointmentFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets up view with appropriate contents. Gathers appointment information based on signed
+     * in user. And calls {@link AppointmentFragment#DisplayRegApps(ArrayList)}
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -309,6 +343,11 @@ public class AppointmentFragment extends Fragment {
 //        return inflatedLayout;
     }
 
+    /**
+     * Sets {@link AppointmentFragment#Appointmentlist} to visible if the student has selected at least
+     * one class. Populates {@link AppointmentFragment#StudentAppointment} with contents of {@code studentClasses}
+     * @param studentClasses logged in user specific classes
+     */
     public void DisplayRegApps(ArrayList<ArrayList<String>> studentClasses )
     {
 
@@ -326,6 +365,11 @@ public class AppointmentFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Cancels a scheduled appointment based on user logged in, and the appointment selected
+     * in the view
+     * @param view
+     */
     public void RemoveAppointment(View view )
     {
         int positionitemToDelete = (int) view.getTag();
@@ -356,6 +400,12 @@ public class AppointmentFragment extends Fragment {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    /**
+     * Deletes appointments in {@code appointment} from database based on {@code userID}
+     * @param appointment {@link ArrayList} of appointments
+     * @param userID {@link String} id of the logged in user
+     */
     public void deletefromdatabase(ArrayList<String> appointment, String userID )
     {
         db.collection("appointment").document(appointment.get(0)).delete()
@@ -375,6 +425,12 @@ public class AppointmentFragment extends Fragment {
         groupsRef.update("appointments", FieldValue.arrayRemove(appointment.get(0)));
 
     }
+
+    /**
+     * Returns the number corresponding to the month given by {@code monthName}
+     * @param monthName {@link String} name of month
+     * @return {@link Integer} month number
+     */
     public static int getNumberFromMonthName(String monthName) {
         return Month.valueOf(monthName.toUpperCase()).getValue();
     }

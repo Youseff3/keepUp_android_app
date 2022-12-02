@@ -41,6 +41,8 @@ import java.util.Map;
  * A simple {@link Fragment} subclass.
  * Use the {@link BookAppointmentFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *
+ * This fragment provides a View to book appointments
  */
 public class BookAppointmentFragment extends Fragment {
     private String FRAGMENT_NAME = "BookAppointmentFragment";
@@ -62,6 +64,9 @@ public class BookAppointmentFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    /**
+     * Required empty public constructor
+     */
     public BookAppointmentFragment() {
         // Required empty public constructor
     }
@@ -69,6 +74,8 @@ public class BookAppointmentFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
+     *
+     * Sets fragment arguments
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
@@ -84,6 +91,12 @@ public class BookAppointmentFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Stores fragment arguments in {@link BookAppointmentFragment#mParam1} and
+     * {@link BookAppointmentFragment#mParam2}
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +107,14 @@ public class BookAppointmentFragment extends Fragment {
 
     }
 
+    /**
+     * Sets up {@link R.layout#fragment_book_appointment} view. Then
+     * Stores user appointments from database in {@link BookAppointmentFragment#bookedApps}.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -168,6 +189,9 @@ public class BookAppointmentFragment extends Fragment {
         return inflatedView;
     }
 
+    /**
+     * Stores booked appointments from database in {@link BookAppointmentFragment#bookedApps}
+     */
     @Override
     public void onResume(){
         super.onResume();
@@ -201,17 +225,33 @@ public class BookAppointmentFragment extends Fragment {
                 });
     }
 
+    /**
+     * Sets views day and month text via {@link BookAppointmentFragment#monthDayText} and
+     * {@link BookAppointmentFragment#dayOfWeekTV}. Day and month information is gathered via
+     * {@link CalendarUtils#selectedDate}
+     */
     private void setDayView() {
         monthDayText.setText(CalendarUtils.monthDayFromDate(CalendarUtils.selectedDate));
         String dayOfWeek =CalendarUtils.selectedDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
         dayOfWeekTV.setText(dayOfWeek);
         setHourAdapter();
     }
+
+    /**
+     * Creates new {@link HourAdapter} and sets the adapter for {@link BookAppointmentFragment#hourListView}
+     * to it
+     */
     private void setHourAdapter() {
         HourAdapter hourAdapter = new HourAdapter(getActivity().getApplicationContext(),hourEventList());
         hourListView.setAdapter(hourAdapter);
     }
 //    ArrayList<HourEvent> allHourEventslist;
+
+    /**
+     * Creates and returns an {@link ArrayList} of available
+     * hours ({@link HourEvent})
+     * @return {@link ArrayList} of available hours
+     */
     private ArrayList<HourEvent> hourEventList() {
         ArrayList<HourEvent> allHourEventslist=new ArrayList<>();
         for(int hour=8;hour<17;hour++){
@@ -240,6 +280,11 @@ public class BookAppointmentFragment extends Fragment {
         return allHourEventslist;
     }
 
+    /**
+     * Populates {@code courseSpinner} with the logged in users courses. When a course is selected from
+     * the spinner, {@link BookAppointmentFragment#bookedApps} is populated with the users appointments
+     * @param courseSpinner {@link Spinner} to be populated with the users courses
+     */
     public void get_a_course(Spinner courseSpinner) {
 //        Log.i(ACTIVITY_NAME,"get a year");
         DocumentReference docRef = db.collection("user").document(MainActivity.UserId);

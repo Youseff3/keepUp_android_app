@@ -32,9 +32,10 @@ import java.util.Arrays;
  * A simple {@link Fragment} subclass.
  * Use the {@link AddClassFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *
+ * This fragment provides a View to select courses based on term and course level
  */
 public class AddClassFragment extends Fragment {
-
     String FRAGMENT_NAME="AddClassFragment";
     Spinner levelSpinner;
     Spinner courseSpinner;
@@ -61,6 +62,9 @@ public class AddClassFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    /**
+     * Required empty public constructor
+     */
     public AddClassFragment() {
         // Required empty public constructor
     }
@@ -83,6 +87,11 @@ public class AddClassFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Stores fragment parameters in {@link AddClassFragment#mParam1}
+     * and {@link AddClassFragment#mParam2}
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +101,15 @@ public class AddClassFragment extends Fragment {
         }
     }
 
+    /**
+     * Inflates {@link R.layout#fragment_add_class}. Then populates {@link AddClassFragment#courses} and
+     * {@link AddClassFragment#termPref} from the database based on the logged in user. {@link AddClassFragment#levelSpinner},
+     * {@link AddClassFragment#courseSpinner} and {@link AddClassFragment#addCourseBtn} are then inflated
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -134,6 +152,13 @@ public class AddClassFragment extends Fragment {
         return inflatedView;
     }
 
+    /**
+     * Populates {@code levelSpinner} with the course levels. Populates
+     * {@code courseSpinner} with the courses that are of the selected course level.
+     * Calls {@link AddClassFragment#getAllCourses}
+     * @param levelSpinner {@link Spinner} to be populated by course levels
+     * @param courseSpinner {@link Spinner} to be populated by courses
+     */
     public void get_a_level(Spinner levelSpinner,Spinner courseSpinner) {
 //        Log.i(ACTIVITY_NAME,"get a year");
         levelList=new ArrayList<String>();
@@ -161,6 +186,14 @@ public class AddClassFragment extends Fragment {
                 });
     }
 
+    /**
+     * Populates {@code courseSpinner} with classes based on {@code termPreference}, {@code levelPreference}
+     * and excludes courses that are in {@code courses}
+     * @param termPreference {@link String} school term to discriminate by for course selection
+     * @param levelPreference {@link String} course level to discriminate by for course selection
+     * @param courseSpinner {@link Spinner} to be populated by course
+     * @param courses {@link ArrayList} of courses already selected
+     */
     public void getAllCourses(String termPreference,String levelPreference,Spinner courseSpinner, ArrayList<String> courses)
     {
         allCourses=new ArrayList<String>();
@@ -210,6 +243,10 @@ public class AddClassFragment extends Fragment {
                 });
     }
 
+    /**
+     * Adds course to user/courses in database
+     * @param crs {@link String} course to add to database
+     */
     public void writeCourseToDatabase(String crs){
         Log.i(FRAGMENT_NAME, MainActivity.UserId);
         Log.i(FRAGMENT_NAME, crs);
@@ -221,6 +258,9 @@ public class AddClassFragment extends Fragment {
         getFragmentManager().popBackStack();
     }
 
+    /**
+     * Calls {@link Fragment#onStop()}
+     */
     @Override
     public void onStop() {
         super.onStop();

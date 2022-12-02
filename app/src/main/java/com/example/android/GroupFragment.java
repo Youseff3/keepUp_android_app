@@ -60,6 +60,8 @@ import java.util.Map;
  * A simple {@link Fragment} subclass.
  * Use the {@link GroupFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *
+ * This fragment creates a view for displaying "Group" information
  */
 
 
@@ -94,6 +96,9 @@ public class GroupFragment extends Fragment {
     protected static RecyclerViewAdapter_AddStudent addstudentadapter;
     protected RecyclerView StudentList;
 
+    /**
+     * Class for storing information about a group
+     */
     private static class GroupsInformation
     {
         private final String  id;  //Primary Key
@@ -104,6 +109,16 @@ public class GroupFragment extends Fragment {
 
         public  ArrayList<String> members;
 
+        /**
+         * Creates a new {@link GroupsInformation} with given parameters
+         * @param id {@link String} group identifier
+         * @param NameofGroup {@link String} group name
+         * @param GroupDescription {@link String} group description
+         * @param coursename {@link String} name of the course the group is for
+         * @param members {@link ArrayList} of the members names
+         * @param memberEmails {@link ArrayList} of the members emails
+         * @param memberIds unused
+         */
         private GroupsInformation(String id , String NameofGroup, String GroupDescription,String coursename, ArrayList<String> members, ArrayList<String> memberEmails,  ArrayList<String> memberIds) {
             this.id = id;
             this.NameofGroup = NameofGroup ;
@@ -115,35 +130,103 @@ public class GroupFragment extends Fragment {
 
         }
 
+        /**
+         * Gets the name of the course the group is for
+         * @return course name
+         */
         public String getCoursename() {return  this.coursename;}
+
+        /**
+         * Gets the group identifier
+         * @return group identifier
+         */
         public String  getid()
         {
             return this.id;
         }
+
+        /**
+         * Gets the name of the group
+         * @return name of group
+         */
         public String getNameofGroup() {return this.NameofGroup;}
+
+        /**
+         * Gets the description of the group
+         * @return group description
+         */
         public String getGroupDescription() {return this.GroupDescription;}
+
+        /**
+         * Gets the members of the groups emails
+         * @return member emails
+         */
         public ArrayList<String> getMemberEmails(){return  this.memberEmails;}
 
+        /**
+         * Sets the members names of the group to {@code newmembers}
+         * @param newmembers {@link ArrayList} of members names
+         */
         public void setMembers(ArrayList<String> newmembers){this.members = newmembers;}
+
+        /**
+         * Sets the description of the group
+         * @param newGroupDesc {@link String} description of the group
+         */
         public void setGroupDescription(String newGroupDesc){this.GroupDescription = newGroupDesc; }
+
+        /**
+         * Sets the name of the group
+         * @param newName {@link String} name of the group
+         */
         public void setGroupName(String newName){this.NameofGroup = newName; }
 
+        /**
+         * Gets the members names of the group
+         * @return members names of the group
+         */
         public ArrayList<String> getMembers() {return this.members;}
 
     }
 
+    /**
+     * Subclass of {@link ArrayAdapter} to be attached to ListViews containing groups
+     */
     private class ViewGroupsAdapter extends ArrayAdapter<String> {
+        /**
+         * Calls the supers constructor
+         * @param context
+         * @param resource
+         */
         public ViewGroupsAdapter(@NonNull Context context, int resource) {
             super(context, resource);
         }
+
+        /**
+         * Gets the number of groups
+         * @return number of groups
+         */
         public int getCount() {
             return groups.size();
         }
 
+        /**
+         * Get a group based on its {@code position} in the list
+         * @param position {@link Integer} index into list of groups
+         * @return {@link GroupsInformation} indexed group
+         */
         public GroupsInformation fetchitem(int position) {
             return groups.get(position);
         }
 
+        /**
+         * Sets up the view for displaying group information and populates it with
+         * group information based on {@code position}
+         * @param position {@link Integer} index into list of groups
+         * @param convertView unused
+         * @param parent unused
+         * @return created {@link View}
+         */
         public View getView(int position, View convertView, ViewGroup parent) {
             inflater = GroupFragment.this.getLayoutInflater();
             result = inflater.inflate(R.layout.group_list_view, null);
@@ -205,10 +288,19 @@ public class GroupFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    /**
+     * Required empty public constructor
+     */
     public GroupFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Create new fragment and set fragment parameters with {@code param1} and {@code param2}
+     * @param param1
+     * @param param2
+     * @return Created fragment
+     */
     public static GroupFragment newInstance(String param1, String param2) {
         GroupFragment fragment = new GroupFragment();
         Bundle args = new Bundle();
@@ -218,6 +310,14 @@ public class GroupFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Creates and returns the view for this fragment, populating it with appropriate data pertaining
+     * to groups
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return Created view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -262,7 +362,11 @@ public class GroupFragment extends Fragment {
     }
 
 
-
+    /**
+     * Stores fragment parameters in {@link GroupFragment#mParam1} and {@link GroupFragment#mParam2}. And
+     * grab the specified users ({@link GroupFragment#mParam1}) name from the database
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -291,6 +395,9 @@ public class GroupFragment extends Fragment {
         }
     }
 
+    /**
+     * Calls supers {@code onStop()} and dismisses dialog if it is open
+     */
     @Override
     public void onStop() {
         super.onStop();
@@ -302,6 +409,9 @@ public class GroupFragment extends Fragment {
 
     }
 
+    /**
+     * Calls supers {@code onPaus()} and dismisses dialog if it is open
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -313,13 +423,17 @@ public class GroupFragment extends Fragment {
 
     }
 
+    /**
+     * Calls supers {@code onDestroy()}
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-
     }
 
+    /**
+     * Calls supers {@code onResume()}
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -330,8 +444,8 @@ public class GroupFragment extends Fragment {
 
     }
 
-    /****
-     * queries the database, filtering information based on user registered and adding it to the UI
+    /**
+     * Queries the database, filtering information based on user registered and adding it to the UI
      * Refreshes page every 3 seconds for updates from the firebase
      * @param name of the user that queries the data
      */

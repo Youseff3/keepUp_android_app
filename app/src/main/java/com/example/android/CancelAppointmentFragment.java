@@ -21,6 +21,8 @@ import java.util.ArrayList;
  * A simple {@link Fragment} subclass.
  * Use the {@link CancelAppointmentFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *
+ * This fragment provides a View to cancel appointments
  */
 public class CancelAppointmentFragment extends Fragment {
     ArrayList<String> all_appointments=new ArrayList<String>();
@@ -35,6 +37,9 @@ public class CancelAppointmentFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    /**
+     * Required empty public constructor
+     */
     public CancelAppointmentFragment() {
         // Required empty public constructor
     }
@@ -57,6 +62,11 @@ public class CancelAppointmentFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Stores fragment parameters in {@link CancelAppointmentFragment#mParam1} and
+     * {@link CancelAppointmentFragment#mParam2}
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +76,13 @@ public class CancelAppointmentFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets up view for fragment and populates appointment spinner with appointments
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,6 +103,11 @@ public class CancelAppointmentFragment extends Fragment {
         return inflatedView;
     }
 
+    /**
+     * Populates {@code appSpinner} with appointments and stores the appointment
+     * selected through the spinner in {@link CancelAppointmentFragment#appointmentToCancel}
+     * @param appSpinner {@link Spinner} spinner to be populated with appointments
+     */
     public void get_an_appointment(Spinner appSpinner) {
         // Get all appointments from the database
         for(Event event:Event.eventsList){
