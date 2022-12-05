@@ -42,6 +42,8 @@ import java.util.Map;
  * A simple {@link Fragment} subclass.
  * Use the {@link ClassFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *
+ * This fragment provides a view for interacting with student classes
  */
 public class ClassFragment extends Fragment {
     protected static final String FRAGMENT_NAME="ClassFragment";
@@ -64,6 +66,9 @@ public class ClassFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    /**
+     * Required empty public constructor
+     */
     public ClassFragment() {
         // Required empty public constructor
     }
@@ -86,16 +91,37 @@ public class ClassFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+    /**
+     * Subclass of {@link ArrayAdapter} for {@link R.layout#group_list_view}
+     */
     private class ViewClassAdpater extends ArrayAdapter<String> {
+        /**
+         * Calls parent constructor
+         * @param context
+         * @param resource
+         */
         public ViewClassAdpater(@NonNull Context context, int resource) {
             super(context, resource);
         }
 
+        /**
+         * Returns number of elements in {@link ClassFragment#Studentclass}
+         * @return {@link Integer} number of students in {@link ClassFragment#Studentclass}
+         */
         public int getCount() {
             return Studentclass.size();
         }
 
 
+        /**
+         * Sets up view by inflating {@link R.layout#group_list_view} and setting
+         * the contents of the inflated view appropriately
+         * @param position
+         * @param convertView
+         * @param parent
+         * @return
+         */
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater inflater = ClassFragment.this.getLayoutInflater();
             View result = inflater.inflate(R.layout.group_list_view, null);
@@ -129,6 +155,11 @@ public class ClassFragment extends Fragment {
         }
 
     }
+
+    /**
+     * Stores fragment parameters in {@link ClassFragment#mParam1} and {@link ClassFragment#mParam2}
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,6 +170,15 @@ public class ClassFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets up view for {@link ClassFragment} and replaces selected {@link ClassFragment#Classlist} item
+     * with {@link AddClassFragment}. It also calls {@link ClassFragment#DisplayRegClasses(ArrayList)} if
+     * {@link ClassFragment#mParam1} is not null
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -218,6 +258,11 @@ public class ClassFragment extends Fragment {
         return test;
     }
 
+    /**
+     * Updates {@link ClassFragment#Studentclass} with courses from {@code studentClasses} and updates
+     * view
+     * @param studentClasses {@link ArrayList} of classes
+     */
     public void DisplayRegClasses(ArrayList<String> studentClasses )
     {
 
@@ -230,6 +275,10 @@ public class ClassFragment extends Fragment {
     }
 
 
+    /**
+     * Removes selected class from {@link ClassFragment#Studentclass} and updates the view
+     * @param view
+     */
     public void RemoveClass(View view )
     {
         int positionitemToDelete = (int) view.getTag();
@@ -262,6 +311,11 @@ public class ClassFragment extends Fragment {
     }
 
 
+    /**
+     * Deletes course from database given {@code coursename} and {@code userID}
+     * @param coursename
+     * @param userID
+     */
     public void deletefromdatabase(String coursename, String userID )
     {
         DocumentReference groupsRef = db.collection("user").document(userID);

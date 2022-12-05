@@ -46,7 +46,9 @@ import com.google.firebase.firestore.SetOptions;
 
 import javax.net.ssl.HttpsURLConnection;
 
-
+/**
+ * This Activity setups up a view to act as the "Course Selection" screen
+ */
 public class CourseSelectionActivity extends AppCompatActivity {
     protected static final String ACTIVITY_NAME="CourseSelectionActivity";
     String termPref;
@@ -73,6 +75,11 @@ public class CourseSelectionActivity extends AppCompatActivity {
             R.id.courseBtn41,R.id.courseBtn42,R.id.courseBtn43,R.id.courseBtn44,R.id.courseBtn45,R.id.courseBtn46};
     private Switch[] switch_buttons=new Switch[idArray.length];
 
+    /**
+     * Sets up the Course Selection view and populates the switch buttons with appropriate courses based on
+     * term preference and level preference
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -373,55 +380,68 @@ public class CourseSelectionActivity extends AppCompatActivity {
 //        }
 //    }
 
-public void popCourses(String termPreference,ArrayList<String> levelPreference)
-{
-    Log.i(ACTIVITY_NAME, " IN POPCOURSES");
-    db.collection("courses")
-            .orderBy("code").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (DocumentChange document : task.getResult().getDocumentChanges()) {
-                            ArrayList<String> crs=new ArrayList<String>();
-                            String courseName = document.getDocument().getString("code");
-//                            String courseDesc = document.getDocument().getString("description");
-                            String courseTitle = document.getDocument().getString("title");
-                            String courseSection = document.getDocument().getString("section");
-                            String courseTerm=document.getDocument().getString("term");
+    /**
+     * Adds courses from database to {@link CourseSelectionActivity#chosenCourses} and
+     * {@link CourseSelectionActivity#chosenCourses2} and {@link Switch}s representing
+     * each course to {@link CourseSelectionActivity#switch_buttons} based on {@code termPreference}
+     * and {@code levelPreference}
+     * @param termPreference {@link String} term to filter courses by
+     * @param levelPreference {@link String} level to filter courses by
+     */
+    public void popCourses(String termPreference,ArrayList<String> levelPreference)
+    {
+        Log.i(ACTIVITY_NAME, " IN POPCOURSES");
+        db.collection("courses")
+                .orderBy("code").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentChange document : task.getResult().getDocumentChanges()) {
+                                ArrayList<String> crs=new ArrayList<String>();
+                                String courseName = document.getDocument().getString("code");
+    //                            String courseDesc = document.getDocument().getString("description");
+                                String courseTitle = document.getDocument().getString("title");
+                                String courseSection = document.getDocument().getString("section");
+                                String courseTerm=document.getDocument().getString("term");
 
-                            for(String lev: levelPreference) {
-                                Log.i(ACTIVITY_NAME,courseName.substring(2, 5));
-                                Log.i(ACTIVITY_NAME,lev);
-                                Log.i(ACTIVITY_NAME,courseTerm);
-                                Log.i(ACTIVITY_NAME,termPreference);
+                                for(String lev: levelPreference) {
+                                    Log.i(ACTIVITY_NAME,courseName.substring(2, 5));
+                                    Log.i(ACTIVITY_NAME,lev);
+                                    Log.i(ACTIVITY_NAME,courseTerm);
+                                    Log.i(ACTIVITY_NAME,termPreference);
 
 
-                                if (courseName.substring(2, 3).equals(lev.substring(0,1)) && courseTerm.equals(termPreference)) {
-//                                    crs.add(courseName);
-//                                    crs.add(courseSection);
-//                                    crs.add(courseTitle);
-//                                    crs.add(courseDesc);
-                                    chosenCourses.add(courseName+" "+courseSection);
-                                    chosenCourses2.add(courseName+" "+courseSection+": "+courseTitle);
+                                    if (courseName.substring(2, 3).equals(lev.substring(0,1)) && courseTerm.equals(termPreference)) {
+    //                                    crs.add(courseName);
+    //                                    crs.add(courseSection);
+    //                                    crs.add(courseTitle);
+    //                                    crs.add(courseDesc);
+                                        chosenCourses.add(courseName+" "+courseSection);
+                                        chosenCourses2.add(courseName+" "+courseSection+": "+courseTitle);
 
+                                    }
                                 }
+
+                            }
+                            for (int j=0;j<chosenCourses2.size();j++){
+                                switch_buttons[j]=(Switch)findViewById(idArray[j]);
+                                switch_buttons[j].setVisibility(View.VISIBLE);
+                                switch_buttons[j].setText(chosenCourses2.get(j));
                             }
 
-                        }
-                        for (int j=0;j<chosenCourses2.size();j++){
-                            switch_buttons[j]=(Switch)findViewById(idArray[j]);
-                            switch_buttons[j].setVisibility(View.VISIBLE);
-                            switch_buttons[j].setText(chosenCourses2.get(j));
-                        }
+                            Log.i(ACTIVITY_NAME,"course pref size: "+String.valueOf(chosenCourses.size()));
 
-                        Log.i(ACTIVITY_NAME,"course pref size: "+String.valueOf(chosenCourses.size()));
-
-                    } else {
-                        Log.w(ACTIVITY_NAME, "Error getting documents or no changes yet.", task.getException());
+                        } else {
+                            Log.w(ACTIVITY_NAME, "Error getting documents or no changes yet.", task.getException());
+                        }
                     }
-                }
-            });
-}
+                });
+    }
+
+    /**
+     * Store user's courses in the database and switch view to {@link MainActivity}
+     * @param view
+     */
     public void goToMain(View view){
 
         // Update one field, creating the document if it does not already exist.
@@ -434,6 +454,11 @@ public void popCourses(String termPreference,ArrayList<String> levelPreference)
         updateUI(userID);
 
     }
+
+    /**
+     * Switch view and pass {@code userID} to {@link MainActivity}
+     * @param userID {@link String} userID to be passed to {@link MainActivity}
+     */
     private void updateUI(String userID) {
 
         Intent intent=new Intent(CourseSelectionActivity.this,MainActivity.class);

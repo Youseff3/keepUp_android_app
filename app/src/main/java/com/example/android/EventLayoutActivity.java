@@ -29,6 +29,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This Activity setups up a view to act as the "Event Layout" screen
+ */
 public class EventLayoutActivity extends AppCompatActivity {
     protected String Activity_Name="EventLayoutActivity";
     private EditText eventNameET;
@@ -41,6 +44,10 @@ public class EventLayoutActivity extends AppCompatActivity {
     String currAppointment;
     ArrayList<String> prof;
 
+    /**
+     * Sets up "Event Layout" view and stores extras from intent in {@link EventLayoutActivity} fields
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +81,11 @@ public class EventLayoutActivity extends AppCompatActivity {
 //        finish();
 //    }
 
+    /**
+     * Stores {@link Event} information in {@link Event#eventsList}, as well as adding
+     * the event to the database
+     * @param view
+     */
     public void saveEventAction(View view) {
         String eventName = eventNameET.getText().toString();
         String eventDesc=eventDescET.getText().toString();

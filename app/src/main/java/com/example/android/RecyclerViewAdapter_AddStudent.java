@@ -17,21 +17,38 @@ import com.google.android.material.chip.Chip;
 
 import java.util.ArrayList;
 
-/***
- * TODO: Make RecyclerView Generic so we dont have to create an adapter for Everything we use
- */
+///***
+// * TODO: Make RecyclerView Generic so we dont have to create an adapter for Everything we use
+// */
 
+/**
+ * This Activity setups up a view to add an remove students
+ */
 public class RecyclerViewAdapter_AddStudent extends  RecyclerView.Adapter<RecyclerViewAdapter_AddStudent.MyViewHolder> {
     Context ctx;
     ArrayList<String> addStudent;
     int id ;
 
+    /**
+     * Creates new {@link RecyclerViewAdapter_AddStudent} and stores parameters as fields
+     * @param ctx
+     * @param addstudent {@link ArrayList} of students to add
+     * @param id {@link Integer} 1 == delete, 2 == add
+     */
     public RecyclerViewAdapter_AddStudent(Context ctx, ArrayList<String> addstudent, int id)
     {
         this.ctx = ctx;
         this.addStudent = addstudent;
         this.id = id;
     }
+
+    /**
+     * Creates and returns a new {@link RecyclerView.ViewHolder} with {@link RecyclerViewAdapter_AddStudent#id}
+     * as a parameter
+     * @param parent
+     * @param viewType unused
+     * @return new {@link RecyclerView.ViewHolder}
+     */
     @NonNull
     @Override
     public RecyclerViewAdapter_AddStudent.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -43,24 +60,43 @@ public class RecyclerViewAdapter_AddStudent extends  RecyclerView.Adapter<Recycl
     }
 
 
+    /**
+     * Sets the text of {@code holder.chipview} to that of the student at {@code position} in
+     * {@link RecyclerViewAdapter_AddStudent#addStudent}
+     * @param holder
+     * @param position {@link Integer} index into student list
+     */
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter_AddStudent.MyViewHolder holder, int position) {
         holder.chipview.setText(addStudent.get(position));
 
     }
 
+    /**
+     * Gets the number of students in the {@link RecyclerViewAdapter_AddStudent#addStudent} list
+     * @return {@link Integer} number of students
+     */
     @Override
     public int getItemCount() {
 
         return addStudent.size();
     }
 
+    /**
+     * A subclass of {@link RecyclerView.ViewHolder} to represent a view for an individual
+     * student
+     */
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         //Can take in View as custom item
         Chip chipview;
 
 
+        /**
+         * Creates a new {@link MyViewHolder} and adds or removes entries based on {@code id}
+         * @param itemView {@link View} to represent students
+         * @param id {@link Integer} 1 == remove, 2 == add
+         */
         public MyViewHolder(@NonNull View itemView, int id ) {
             super(itemView);
             chipview = itemView.findViewById(R.id.AddGroup);

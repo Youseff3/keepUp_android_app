@@ -24,6 +24,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.util.ArrayList;
 
+/**
+ * This Activity setups up a view to act as the "Home" screen
+ */
 public class MainActivity extends AppCompatActivity {
     protected static final String ACTIVITY_NAME="MainActivity";
     String yearPref;
@@ -35,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
     Button groupButton;
     Button appointmentButton;
 
+    /**
+     * Inflates {@link R.menu#menu_main} with {@code menu}
+     * @param menu {@link Menu} menu to be inflated
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -44,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Assigns functions for each menu item to run when selected
+     * @param item {@link MenuItem} menu item that has been selected
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -61,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Displays a "Help" dialog box
+     */
     public void showHelp()
     {
 
@@ -80,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Switches view to LoginActivity
+     */
     public void SignUserOut()
     {
         startActivity(new Intent(this, LoginActivity.class));// TODO: Might need to actually ask firebase to do this
@@ -87,6 +106,11 @@ public class MainActivity extends AppCompatActivity {
 
     public static String title="Home";
 
+    /**
+     * Sets up the home screen view, and removes all fragments from the support fragment
+     * manager
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,6 +188,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Calls the super destroy method
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

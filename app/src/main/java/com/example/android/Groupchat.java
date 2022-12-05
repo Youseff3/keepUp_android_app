@@ -39,7 +39,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * This Activity setups up a view to act as the "Group Chat" screen
+ */
 public class Groupchat extends AppCompatActivity {
     Button Send;
     EditText TextField;
@@ -54,22 +56,46 @@ public class Groupchat extends AppCompatActivity {
     String GroupTitle;
 
 
+    /**
+     * Subclass of {@link ArrayAdapter} to be attached to {@link ListView}s that represent chat
+     * messages
+     */
     private class ChatAdapter extends ArrayAdapter<String> {
 
 
+        /**
+         * Calls super constructor
+         * @param ctx
+         */
         public ChatAdapter(Context ctx) {
             super(ctx, 0);
 
         }
 
+        /**
+         * Gets the number of messages that are stored
+         * @return {@link Integer} number of messages
+         */
         public int getCount() {
             return messages.size();
         }
 
+        /**
+         * Gets a message at {@code position} in the list of messages
+         * @param position {@link Integer} index into message list
+         * @return {@link String} message at {@code position}
+         */
         public String getItem(int position) {
             return messages.get(position);
         }
 
+        /**
+         * Gets the view for the message at {@code position}
+         * @param position {@link Integer} position in message list
+         * @param convertView unused
+         * @param parent unused
+         * @return View for message at {@code position}
+         */
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater inflater = Groupchat.this.getLayoutInflater();
             String[] messages = getItem(position).split(" ", 3);
@@ -100,6 +126,10 @@ public class Groupchat extends AppCompatActivity {
 
     }
 
+    /**
+     * Sets up the view for the group chat
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +165,12 @@ public class Groupchat extends AppCompatActivity {
 
     }
 
+    /**
+     * Stores the message at {@code position} in the message list in the database
+     * @param position {@link Integer} index into message list
+     * @param groupid {@link String} group identifier
+     * @param name unused
+     */
     public void WriteMessagetoDatabase(int position, String groupid, String name) {
 
         LocalTime now= LocalTime.now();
@@ -147,6 +183,11 @@ public class Groupchat extends AppCompatActivity {
 
     }
 
+    /**
+     * Populates {@link Groupchat#messages} with group chat messages stored in the database baesd on
+     * {@code groupid}
+     * @param groupid {@link String} group identifier to retrieve messages for
+     */
     public void GetInformation(String groupid) {
         RefreshInfoRunnable = new Runnable() {
             @Override

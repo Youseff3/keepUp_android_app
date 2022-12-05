@@ -48,6 +48,8 @@ import java.util.Map;
  * A simple {@link Fragment} subclass.
  * Use the {@link CreateGroupFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *
+ * This fragment provides a View to create groups
  */
 public class CreateGroupFragment extends Fragment {
 
@@ -117,6 +119,11 @@ public class CreateGroupFragment extends Fragment {
         }
     }
 
+    /**
+     * Calls the super's {@code onCreate()} and stores the fragments parameters in fields
+     * {@link CreateGroupFragment#UserId} and {@link CreateGroupFragment#mParam2}
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,6 +133,14 @@ public class CreateGroupFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets up the "Create Group" fragment view by populating spinner and forms with content from the
+     * database and setting onClickListeners
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -246,6 +261,11 @@ public class CreateGroupFragment extends Fragment {
         return inflated_view;
     }
 
+    /**
+     * Adds the selected user from the {@link CreateGroupFragment#StudentSpinner} to the group
+     * and removes the selected user as an option from the {@link CreateGroupFragment#StudentSpinner}
+     * @param view
+     */
     public void AddUser(View view ){
         if ( addstudentadapter.getItemCount() < MAXIMUM) {
             int spinner_position = StudentSpinner.getSelectedItemPosition();
@@ -284,6 +304,10 @@ public class CreateGroupFragment extends Fragment {
 
     }
 
+    /**
+     * Writes the form information to the group document of the database if the form passes validation
+     * @param view
+     */
     public void SaveForm(View view){
 
         if (!ValidateForm()) {
@@ -293,6 +317,13 @@ public class CreateGroupFragment extends Fragment {
             WriteToDatabase();
         }
     }
+
+    /**
+     * Helper method to quickly show message in snackbar
+     * @param message {@link Integer} message to show
+     * @param color {@link Integer} color of snackbar message background
+     * @param duration {@link Integer} duration of snackbar message
+     */
     private void PrintSnackbar(int message, int color, int duration)
     {
         Snackbar snackbar = Snackbar.make(this.getActivity().findViewById(R.id.linearLayout), message, duration)
@@ -301,6 +332,11 @@ public class CreateGroupFragment extends Fragment {
         snackview.setBackgroundColor(color);
         snackbar.show();
     }
+
+    /**
+     * Validates the form by checking if all the necessary fields have been filled
+     * @return {@link Boolean} true if validated, false if not validated
+     */
     private boolean ValidateForm(){
         if (CourseSpinner.getSelectedItemPosition() != 0 )
             if (!(GroupNameInput.getText().toString().compareTo("")==0) )
@@ -309,6 +345,11 @@ public class CreateGroupFragment extends Fragment {
 
         return false;
     }
+
+    /**
+     * Removes the student given by {@code view} from the {@link CreateGroupFragment#StudentList}
+     * @param view {@link View} representing student to be deleted
+     */
     public static void DeleteEntry(View view)
     {
         Chip elementDelete = (Chip) (view);
@@ -343,6 +384,10 @@ public class CreateGroupFragment extends Fragment {
             i++;
         }
     }
+
+    /**
+     * Write group information to group document of database
+     */
     public void WriteToDatabase()
     {
         Log.i(FRAGMENT_NAME, "Writing to database ");
@@ -426,6 +471,10 @@ public class CreateGroupFragment extends Fragment {
 
     }
 
+    /**
+     * Calls the super's {@code onStop()} and clears {@link CreateGroupFragment#user} and
+     * {@link CreateGroupFragment#students}
+     */
     @Override
     public void onStop() {
         super.onStop();

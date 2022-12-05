@@ -29,11 +29,19 @@ import java.util.regex.Pattern;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * This Activity setups up a view to act as the "Registration" screen
+ */
 public class RegisterActivity extends AppCompatActivity {
     protected static final String ACTIVITY_NAME="RegisterActivity";
     private FirebaseAuth mAuth;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    /**
+     * Sets up "Register Activity" view and stores Firebase authorization instance in
+     * {@link RegisterActivity#mAuth}
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +51,11 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
     }
 
+    /**
+     * Creates a new user in Firebase and stores a document in the database with information regarding
+     * the created user
+     * @param view
+     */
     public void registerAction(View view){
         EditText firstNameET =findViewById(R.id.firstNametext);
         String firstName = firstNameET.getText().toString();
@@ -88,6 +101,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Switch view and pass {@code userID} to {@link RegisterActivity2}
+     * @param user unused
+     * @param userID {@link String} user identifier
+     */
     private void updateUI(FirebaseUser user, String userID) {
 
         Intent intent=new Intent(RegisterActivity.this,RegisterActivity2.class);
@@ -105,6 +123,12 @@ public class RegisterActivity extends AppCompatActivity {
 //        return password_check.matches();
 //    }
 
+    /**
+     * Validates the email, making sure it has a valid email format and the email address belongs to
+     * Wilfrid Laurier University
+     * @param email {@link String} email to be validated
+     * @return
+     */
     public Boolean validateEmail(String email){
         String[] emailArray=email.split("@");
         String laurierDomain="mylaurier.ca";
@@ -117,6 +141,15 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Verifies the details of the registration form such as: no empty fields, passwords match, email is valid
+     * @param firstName {@link String} registering users first name
+     * @param lastName {@link String} registering users last name
+     * @param email {@link String} registering users email
+     * @param password {@link String} registering users password
+     * @param password2 {@link String} registering users password confirmation
+     * @return true if validation was successful
+     */
     public Boolean validateRegistration(String firstName,String lastName,String email, String password,String password2){
         if(TextUtils.isEmpty(firstName)){
             Toast.makeText(RegisterActivity.this, R.string.fName_error_message, Toast.LENGTH_SHORT).show();
