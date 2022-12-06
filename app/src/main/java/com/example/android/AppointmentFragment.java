@@ -137,6 +137,9 @@ public class AppointmentFragment extends Fragment {
 
             message.setText(StudentAppointment.get(position).get(3)+" meeting at "+StudentAppointment.get(position).get(1)+" on "+StudentAppointment.get(position).get(2));
             groupDescription.setText(StudentAppointment.get(position).get(4)+". "+StudentAppointment.get(position).get(5));
+            if(StudentAppointment.get(position).size()>7){
+                cardGroup.setCardBackgroundColor(Color.GREEN);
+            }
             classIcon.setImageResource(R.drawable.class_icon);
             classIcon.setColorFilter((colorIcon[ (int)Math.floor(Math.random()*(colorIcon.length))]));
             classIcon.setVisibility(View.INVISIBLE);

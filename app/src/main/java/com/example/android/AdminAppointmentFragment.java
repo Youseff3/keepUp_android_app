@@ -1,7 +1,9 @@
 package com.example.android;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -58,6 +60,8 @@ public class AdminAppointmentFragment extends Fragment {
     private ArrayList<ArrayList<String>> appointments = new ArrayList<ArrayList<String>>();
     private ListView Appointmentlist;
     TextView noAppinfo;
+
+    String studentID;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -130,31 +134,56 @@ public class AdminAppointmentFragment extends Fragment {
             ImageView EditIcon = result.findViewById(R.id.EditIcon);
             EditIcon.setVisibility(View.INVISIBLE);
 
-
-
-
             deleteButton.setTag(position);
             classIcon.setTag(position);
             cardGroup.setTag(position);
 
             message.setText(StudentAppointment.get(position).get(3)+" meeting at "+StudentAppointment.get(position).get(1)+" on "+StudentAppointment.get(position).get(2));
             groupDescription.setText(StudentAppointment.get(position).get(4)+". "+StudentAppointment.get(position).get(5));
+
+            if(StudentAppointment.get(position).size()>7){
+                cardGroup.setCardBackgroundColor(Color.GREEN);
+            }
+
             classIcon.setImageResource(R.drawable.class_icon);
             classIcon.setColorFilter((colorIcon[ (int)Math.floor(Math.random()*(colorIcon.length))]));
             classIcon.setVisibility(View.INVISIBLE);
 
             ImageView removeClassIV= result.findViewById(R.id.RemoveGroup);
-            removeClassIV.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    RemoveAppointment(view);
-                }
-            });
+            removeClassIV.setVisibility(View.INVISIBLE);
+//            removeClassIV.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    RemoveAppointment(view);
+//                }
+//            });
 
             cardGroup.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getActivity(), "Appointment acccepted", Toast.LENGTH_SHORT).show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    // 2. Chain together various setter methods to set the dialog characteristics
+
+                    builder.setMessage("Would you like to accept or cancel this appointment?") //Add a dialog message to strings.xml
+                            .setTitle("Appointment")
+                            .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    AcceptAppointment(view);
+
+//                                    cardGroup.setCardBackgroundColor(Color.GREEN);
+
+                                    dialog.cancel();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    RemoveAppointment(view);
+                                    dialog.cancel();
+                                    // User cancelled the dialog
+                                }
+                            })
+                            .show();
+//                    Toast.makeText(getActivity(), "Appointment acccepted", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -198,8 +227,19 @@ public class AdminAppointmentFragment extends Fragment {
         View test = inflater.inflate(R.layout.fragment_group, container, false);
         Appointmentlist = test.findViewById(R.id.GroupinformationList);
         noAppinfo = test.findViewById(R.id.NoGroupinfo);
+
         TextView addAppBtn = test.findViewById(R.id.BannerText);
-        addAppBtn.setText("Book an Appointment");
+        addAppBtn.setText("Set Available Times");
+        addAppBtn.setVisibility(View.INVISIBLE);
+
+        addAppBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getActivity(),AdminAppTimesActivity.class);
+                startActivity(intent);
+            }
+        });
+
         adapter = new AdminAppointmentFragment.ViewAppointmentAdapter(this.getContext(), 0);
         Appointmentlist.setAdapter(adapter);
         noAppinfo.setText(R.string.noAppAdded);
@@ -209,16 +249,17 @@ public class AdminAppointmentFragment extends Fragment {
         refreshBtn.setVisibility(View.INVISIBLE);
 
         CardView btn = test.findViewById(R.id.Banner);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainerView, BookAppointmentFragment.class, getArguments()) //TODO: Change to Add Class Fragment
-                        .setReorderingAllowed(true)
-                        .addToBackStack("tempBackStack")
-                        .commit();
-            }
-        });
+        btn.setVisibility(View.INVISIBLE);
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                getActivity().getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.fragmentContainerView, BookAppointmentFragment.class, getArguments()) //TODO: Change to Add Class Fragment
+//                        .setReorderingAllowed(true)
+//                        .addToBackStack("tempBackStack")
+//                        .commit();
+//            }
+//        });
 
         if (mParam1 != null) {
             db.collection("courses").whereEqualTo("instructor_id", mParam1)
@@ -246,6 +287,8 @@ public class AdminAppointmentFragment extends Fragment {
                                                             String course = document.getDocument().getString("course");
                                                             String title = document.getDocument().getString("title");
                                                             String desc = document.getDocument().getString("desc");
+                                                            studentID=document.getDocument().getString("user");
+                                                            String color=document.getDocument().getString("color");
                                                             LocalDate currDate = LocalDate.now();
                                                             String[] dateInfo = date.split(" ");
                                                             LocalDate appDate = LocalDate.of(Integer.valueOf(dateInfo[2]), getNumberFromMonthName(dateInfo[1]), Integer.valueOf(dateInfo[0]));
@@ -258,7 +301,12 @@ public class AdminAppointmentFragment extends Fragment {
                                                                 val.add(course);
                                                                 val.add(title);
                                                                 val.add(desc);
+                                                                val.add(studentID);
+                                                                if(color!=null){
+                                                                    val.add(color);
+                                                                }
                                                                 temp2.add(val);
+
                                                             }
                                                         }
                                                         DisplayRegApps(temp2);
@@ -276,9 +324,6 @@ public class AdminAppointmentFragment extends Fragment {
                     });
 
         }
-
-
-
         return test;
     }
 
@@ -329,7 +374,7 @@ public class AdminAppointmentFragment extends Fragment {
                             noAppinfo.setVisibility(View.VISIBLE);
                             Appointmentlist.setVisibility(View.INVISIBLE);
                         }
-                        deletefromdatabase(appname, MainActivity.UserId );
+                        deletefromdatabase(appname, appname.get(6) );
                     } });
         builder.setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {
@@ -337,6 +382,45 @@ public class AdminAppointmentFragment extends Fragment {
                     } });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public void AcceptAppointment(View view )
+    {
+        int positionitemToDelete = (int) view.getTag();
+        ArrayList<String> appname = StudentAppointment.get(positionitemToDelete);
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(this.getContext());
+
+        builder.setTitle("Are you sure you want to accept this appointment?");
+        builder.setPositiveButton(R.string.Yes,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        updatedatabase(appname, appname.get(6) );
+                    } });
+        builder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    } });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void updatedatabase(ArrayList<String> appointment, String userID) {
+
+        db.collection("appointment").document(appointment.get(0)).update("color","green")
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(FRAGMENT_NAME, "DocumentSnapshot successfully deleted!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(FRAGMENT_NAME, "Error deleting document", e);
+                    }
+                });
+
     }
 
     /**
