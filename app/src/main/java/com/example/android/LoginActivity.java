@@ -25,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private  EditText usernameET;
     private  EditText passwordET;
-
+    private  static final String email_identifier = "@gmail.com";
 
     /**
      * Sets up the view for {@link LoginActivity}, grabs the firebase authorization instance and
@@ -109,10 +109,18 @@ public class LoginActivity extends AppCompatActivity {
      * @param userID {@link String} user ID to be passed to {@link MainActivity}
      */
     private void updateUI(FirebaseUser user, String userID) {
+        if (user.getEmail().endsWith(email_identifier))
+        {
+            Intent intent = new Intent(this, AdminMainActivity.class);
+            intent.putExtra("userID", userID);
+            startActivity(intent);
 
-        Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-        intent.putExtra("userID", userID);
-        startActivityForResult(intent, 1);
+        }
+        else {
+            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+            intent.putExtra("userID", userID);
+            startActivity(intent);
+        }
 
     }
 
@@ -125,12 +133,15 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /**
+/*
+    */
+/**
      * Calls the super {@code onActivityResult()} and calls {@link LoginActivity#SignUserOut()}
      * @param requestCode
      * @param resultCode
      * @param data
-     */
+     *//*
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -138,13 +149,16 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    /**
+    */
+/**
      * Does nothing
-     */
+     *//*
+
     public void SignUserOut()
     {
 
     }
+*/
 
     /**
      * Sends a reset password email to the inputted email so long as the email
@@ -176,6 +190,11 @@ public class LoginActivity extends AppCompatActivity {
             passwordET.setVisibility(View.INVISIBLE);
             Toast.makeText(this, "Please enter an email address and click forgot password", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void CreateAdmin(View view )
+    {
+        startActivity(new Intent(this, Admin_Create.class));
     }
     //    public Boolean validate(String username,String password){
 //        if (TextUtils.isEmpty(password)){

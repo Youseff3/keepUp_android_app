@@ -83,7 +83,14 @@
             android:text="Forgot Password"
             android:onClick="ForgotPassword"
             android:textColor="@color/purple_700"/>
-
+        <TextView
+            android:id="@+id/InstructorCreate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="create_instructor_account"
+            android:layout_margin="10dp"
+            android:onClick="CreateAdmin"
+            android:textColor="@color/purple_700"/>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,6 +22,7 @@ public class AdminMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_main);
+        Bundle extras=getIntent().getExtras();
 
 //        Bundle extras=getIntent().getExtras();
 //        userID = extras.getString("userID");
@@ -44,7 +45,7 @@ public class AdminMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 fragmentManager.beginTransaction()
-                        .replace(R.id.adminFragmentContainerView,AdminGroupFragment.class,null)
+                        .replace(R.id.adminFragmentContainerView,AdminGroupFragment.class,extras)
                         .setReorderingAllowed(true)
                         .addToBackStack("tempBackStack")
                         .commit();

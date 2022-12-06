@@ -17,16 +17,12 @@ import com.google.android.material.chip.Chip;
 
 import java.util.ArrayList;
 
-///***
-// * TODO: Make RecyclerView Generic so we dont have to create an adapter for Everything we use
-// */
-
 /**
  * This Activity setups up a view to add an remove students
  */
 public class RecyclerViewAdapter_AddStudent extends  RecyclerView.Adapter<RecyclerViewAdapter_AddStudent.MyViewHolder> {
     Context ctx;
-    ArrayList<String> addStudent;
+    ArrayList<String> information;
     int id ;
 
     /**
@@ -38,7 +34,7 @@ public class RecyclerViewAdapter_AddStudent extends  RecyclerView.Adapter<Recycl
     public RecyclerViewAdapter_AddStudent(Context ctx, ArrayList<String> addstudent, int id)
     {
         this.ctx = ctx;
-        this.addStudent = addstudent;
+        this.information = addstudent;
         this.id = id;
     }
 
@@ -62,24 +58,24 @@ public class RecyclerViewAdapter_AddStudent extends  RecyclerView.Adapter<Recycl
 
     /**
      * Sets the text of {@code holder.chipview} to that of the student at {@code position} in
-     * {@link RecyclerViewAdapter_AddStudent#addStudent}
+     * {@link RecyclerViewAdapter_AddStudent#information}
      * @param holder
      * @param position {@link Integer} index into student list
      */
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter_AddStudent.MyViewHolder holder, int position) {
-        holder.chipview.setText(addStudent.get(position));
+        holder.chipview.setText(information.get(position));
 
     }
 
     /**
-     * Gets the number of students in the {@link RecyclerViewAdapter_AddStudent#addStudent} list
+     * Gets the number of students in the {@link RecyclerViewAdapter_AddStudent#information} list
      * @return {@link Integer} number of students
      */
     @Override
     public int getItemCount() {
 
-        return addStudent.size();
+        return information.size();
     }
 
     /**
@@ -129,7 +125,31 @@ public class RecyclerViewAdapter_AddStudent extends  RecyclerView.Adapter<Recycl
                 });
             }
 
+            else if (id ==3 )
+            {
+
+
+                chipview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        AlertDialog.Builder builder =
+                                new AlertDialog.Builder(view.getContext());
+                        builder.setTitle("Course: " + chipview.getText());
+                        builder.setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                    } });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                    }
+                });
+            }
+
+        }
+
 
         }
     }
-}

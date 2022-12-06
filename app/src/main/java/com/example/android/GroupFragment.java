@@ -588,31 +588,6 @@ public class GroupFragment extends Fragment {
     }
 
 
-    /****
-     * Starts the Email Intent to send an email to the instructor directly
-     * TODO: Start Email Intent to email instructor directly, would need instructor email from firebase
-     * @param view
-     */
-    public void EmailInstructor(View view, int positionitem )
-    {
-        GroupsInformation info = groups.get(positionitem);
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        Log.i(FRAGMENT_NAME, "members: " + info.getMemberEmails());
-        intent.putExtra(Intent.EXTRA_EMAIL, (String[]) info.getMemberEmails().toArray(new String[info.getMemberEmails().size()]));
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Email from "+ GroupName.getText());
-        intent.setData(Uri.parse("mailto:"));
-        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-
-            startActivity(intent);
-
-        } else {
-            Toast.makeText(getActivity(), R.string.EmailErr,
-                    Toast.LENGTH_SHORT).show();
-        }
-
-
-
-    }
 
 
     /**
