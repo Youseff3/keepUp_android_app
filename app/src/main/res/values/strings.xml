@@ -14,7 +14,7 @@
     <string name="banner_registration_page">Registration Page</string>
     <string name="psswrd_error_message">Please enter your password!</string>
     <string name="email_error_message">Please enter a valid email address!</string>
-    <string name="regEx_psswrd_error_message">The password must be at least 8 characters and must include one digit, one lowercase character, one uppercase character, one special character, and one special character(!@#$%&amp;*()-+=^). No white spaces are allowed.</string>
+    <string name="regEx_psswrd_error_message">The password must be at least 8 characters and must include one digit, one lowercase character, one uppercase character, and one special character(!@#$%&amp;*()-+=^). No white spaces are allowed.</string>
     <string name="reg_psswrd_error_message">Please enter and confirm your password!</string>
     <string name="confirm_password_error_message">Please enter the same password in the Confirm Password field!</string>
     <string name="fName_error_message">Please enter your first name!</string>
@@ -95,5 +95,6 @@ To get started click on add a course to bring in additional classes for you to i
     <!-- Class Fragment Strings.xml Start -->
     <string name="noClassAdded"> You have no classes </string>
     <string name="noAppAdded"> You do not have any upcoming appointments.</string>
+
 
 </resources>

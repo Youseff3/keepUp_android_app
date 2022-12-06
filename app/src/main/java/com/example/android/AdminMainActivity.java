@@ -56,7 +56,7 @@ public class AdminMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 fragmentManager.beginTransaction()
-                        .replace(R.id.adminFragmentContainerView,AdminAppointmentFragment.class,null)
+                        .replace(R.id.adminFragmentContainerView,AdminAppointmentFragment.class,extras)
                         .setReorderingAllowed(true)
                         .addToBackStack("tempBackStack")
                         .commit();

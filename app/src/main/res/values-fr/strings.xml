@@ -1,0 +1,82 @@
+<resources>
+    <string name="app_name">android</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="title_activity_login">Activité de connexion</string>
+
+    <!--Chaînes du formulaire de connexion-->
+    <string name="username_login_form">Nom d\'utilisateur</string>
+    <string name="password_login_form">Mot de passe</string>
+    <string name="username_login_form_hint">nom de connexion</string>
+    <string name="login_button_text">Se connecter</string>
+    <string name="go_to_register">Créer un nouveau compte</string>
+
+    <string name="banner_registration_page">Page d\'inscription</string>
+    <string name="psswrd_error_message">Veuillez saisir votre mot de passe !</string>
+    <string name="email_error_message">Veuillez saisir une adresse e-mail valide !</string>
+    <string name="regEx_psswrd_error_message">Le mot de passe doit comporter au moins 8 caractères et doit comprendre un chiffre, un caractère en minuscules, un caractère en majuscules, un caractère spécial et un caractère spécial (!@#$%&amp;*()-+=^). Les espaces ne sont pas autorisés.</string>
+    <string name="reg_psswrd_error_message">Veuillez saisir et confirmer votre mot de passe !</string>
+    <string name="confirm_password_error_message">Veuillez saisir le même mot de passe dans le champ de confirmation du mot de passe !</string>
+    <string name="fName_error_message">Veuillez saisir votre prénom !</string>
+    <string name="lName_error_message">Veuillez saisir votre nom !</string>
+
+    <string name="register_button_text">S\'inscrire</string>
+    <string name="firstName_register_form">Prénom</string>
+    <string name="firstName_register_form_hint">Prénom</string>
+    <string name="lastName_register_form">Nom</string>
+    <string name="lastName_register_form_hint">Nom</string>
+    <string name="email_register_form">Adresse e-mail</string>
+    <string name="email_register_form_hint">email@domaine.com</string>
+    <string name="password_confirmation_register_form">Confirmer le mot de passe</string>
+
+    <string name="select_term">Sélectionnez le terme qui vous intéresse: </string>
+
+    <string name="select_year">Sélectionnez l\'année dans laquelle vous êtes: </string>
+    <string name="select_course">Sélectionnez les cours qui vous intéressent: </string>
+    <string name="select_level">Sélectionnez le niveau des cours qui vous intéressent:</string>
+
+    <string-array name="years_list">
+        <item>Première année</item>
+        <item>Deuxième année</item>
+        <item>Troisième année</item>
+        <item>Quatrième année</item>
+    </string-array>
+    <string-array name="levels_list">
+        <item>Niveau 100</item>
+        <item>Niveau 200</item>
+        <item>Niveau 300</item>
+        <item>Niveau 400</item>
+    </string-array>
+
+    <string name="proceed_button">Créer un compte</string>
+    <string name="course_selection_button">Sélection de cours</string>
+    <string name="hello_blank_fragment">Bonjour fragment vide</string>
+
+
+    <string name="BannerRegistrationPage"> Page d\'enregistrement des groupes</string>
+    <string name="FormErr"> Erreur : le formulaire est invalide, veuillez vous assurer que tous les champs sont remplis</string>
+
+    <string name="Close"> Fermer </string>
+    <string name="EmailErr">Vous n\'avez pas d\'application qui puisse envoyer des emails </string>
+    <string name="SaveButtonText"> Enregistrer </string>
+    <string name="ConfirmGroupReButton"> Êtes-vous sûr de vouloir vous retirer de </string>
+    <string name="Yes"> Oui</string>
+    <string name="NoGroupsPage"> Aucun groupe disponible! </string>
+
+    <string name="feedback"> Laissez un commentaire sur l\'application</string>
+    <string name="GroupsParagraph">La fonctionnalité des groupes est le centre de l\'application où vous pouvez interagir avec d\'autres étudiants dans la même classe que vous. Cela vous permet d\'ajouter des camarades de classe dans d\'autres classes, d\'organiser votre groupe et d\'envoyer un email à votre enseignant ou à d\'autres membres du groupe. Pour commencer, vous pouvez cliquer sur le bouton créer un groupe, cela vous mènera à un formulaire d\'utilisateur à remplir avec toutes les informations pertinentes. Une fois un groupe créé, vous pouvez soit éditer votre groupe, vous retirer du groupe ou en savoir plus en cliquant sur le groupe. </string>
+    <string name="AppointmentParagraph">Dans la section des rendez-vous, vous pouvez interagir avec votre enseignant. Vous pouvez ici réserver et annuler des rendez-vous pour vous et votre groupe.
+Pour commencer, sélectionnez votre cours dans le bouton déroulant en haut de la page pour lequel vous souhaitez réserver un rendez-vous. Ensuite, faites défiler jusqu\'à un jour souhaité et cliquez sur le bouton réserver un rendez-vous. Vous verrez alors une page où vous pourrez sélectionner un moment pour votre rendez-vous. Lorsque vous avez terminé, appuyez sur le bouton terminé.
+Vous pouvez également annuler un rendez-vous et consulter la liste complète des rendez-vous que vous avez. N\'hésitez pas à explorer les fonctionnalités des rendez-vous !</string>
+
+    <string name="CoursesParagraph">La section des cours est votre guichet unique pour explorer toutes les offres de cours de votre école. C\'est le cœur de l\'application, dictant les groupes, les étudiants et les enseignants avec lesquels vous pouvez interagir. Pour commencer, cliquez sur ajouter un cours pour inclure des classes supplémentaires avec lesquelles vous pouvez interagir. Cela vous mènera à une page où vous pourrez sélectionner un cours par niveau d\'année. Vous pouvez également vous désinscrire d\'un cours et consulter la liste complète des cours auxquels vous êtes inscrit. N\'hésitez pas à explorer les fonctionnalités des cours !</string>
+
+    <string name="Groups"> Groupes</string>
+    <string name="Appointments"> rendez-vous</string>
+    <string name="Classes"> Des classes </string>
+    <!-- Main Activity Strings.xml End -->
+
+
+    <!-- Class Fragment Strings.xml Start -->
+    <string name="noClassAdded"> tu n\'as pas de cours </string>
+    <string name="noAppAdded"> Vous n\'avez aucun rendez-vous à venir.</string>
+</resources>
