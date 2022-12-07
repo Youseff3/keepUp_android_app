@@ -92,7 +92,7 @@ public class AdminMainActivity extends AppCompatActivity {
      */
     public void SignUserOut()
     {
-        startActivity(new Intent(this, LoginActivity.class));// TODO: Might need to actually ask firebase to do this
+        finish();
     }
 
     /**
@@ -147,6 +147,8 @@ public class AdminMainActivity extends AppCompatActivity {
                         .commit();
             }
         });
+        adminGroupsBtn.performClick();
+
     }
 
     /**

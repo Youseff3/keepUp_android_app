@@ -40,7 +40,7 @@ import java.util.Map;
 public class Admin_Create extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static String ACTIVITY_NAME = "ADMINCREATE" ;
-    private static String instituion_address= "@gmail.com"; //TODO: Change to WLU.CA
+    private static String instituion_address= "@wlu.ca";
     ArrayList<String> instructor_names = new ArrayList<String>();
     String instructor_field = "instructor";
     ArrayList<String> courses = new ArrayList<String>();
@@ -354,4 +354,15 @@ public class Admin_Create extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        added_instructors.clear();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        added_instructors.clear();
+    }
 }

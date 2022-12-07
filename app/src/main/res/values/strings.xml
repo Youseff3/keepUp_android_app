@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">android</string>
+    <string name="app_name">Keep Up!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">LoginActivity</string>
 
