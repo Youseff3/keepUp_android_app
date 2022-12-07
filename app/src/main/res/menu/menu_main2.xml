@@ -1,0 +1,34 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.android.AdminMainActivity">
+
+
+    <!--    <item-->
+    <!--        android:id="@+id/action_settings"-->
+    <!--        android:orderInCategory="100"-->
+    <!--        android:title="@string/action_settings"-->
+    <!--        app:showAsAction="never" />-->
+
+    <item
+        android:id="@+id/help2"
+        android:icon="@drawable/help_icon"
+        android:orderInCategory="1"
+        app:showAsAction="always"
+        android:title="help"/>
+
+    <!--    <item-->
+    <!--        android:id="@+id/feedback"-->
+    <!--        android:orderInCategory="200"-->
+    <!--        app:showAsAction="never"-->
+    <!--        android:title="@string/feedback"-->
+    <!--        />-->
+
+    <item
+        android:id="@+id/Signout2"
+        android:title="Sign out"
+        android:orderInCategory="300"
+        app:showAsAction="never"/>
+
+
+</menu>

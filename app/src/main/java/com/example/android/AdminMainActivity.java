@@ -1,9 +1,18 @@
 package com.example.android;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -16,13 +25,69 @@ public class AdminMainActivity extends AppCompatActivity {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     public static String userID;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main2, menu);
+        // Might need to change, this actually loads the first fragment and pases the Bundle info
+
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+//            case R.id.action_settings:
+//                return true;
+            case R.id.help2:
+                showHelp();
+                return true;
+            case R.id.Signout2:
+                SignUserOut();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 
+    /**
+     * Displays a "Help" dialog box
+     */
+    public void showHelp()
+    {
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View views = inflater.inflate(R.layout.admin_help_dialog_box, null);
+
+        AlertDialog.Builder customDialog =  new AlertDialog.Builder(this);
+        customDialog.setView(views)
+                .setPositiveButton(R.string.Close, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+        Dialog dialog = customDialog.create();
+        dialog.show();
+    }
+
+    /**
+     * Switches view to LoginActivity
+     */
+    public void SignUserOut()
+    {
+        startActivity(new Intent(this, LoginActivity.class));// TODO: Might need to actually ask firebase to do this
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_main);
         Bundle extras=getIntent().getExtras();
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.admin_toolbar);
+        setSupportActionBar(myToolbar);
+
 
 //        Bundle extras=getIntent().getExtras();
 //        userID = extras.getString("userID");
@@ -62,5 +127,9 @@ public class AdminMainActivity extends AppCompatActivity {
                         .commit();
             }
         });
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }
