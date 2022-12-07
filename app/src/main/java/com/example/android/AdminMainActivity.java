@@ -18,6 +18,9 @@ import android.widget.Button;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * This Activity setups up a view to act as the "Main activity" screen for the admin
+ */
 public class AdminMainActivity extends AppCompatActivity {
     Button adminClassBtn;
     Button adminAppointmentBtn;
@@ -25,6 +28,12 @@ public class AdminMainActivity extends AppCompatActivity {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     public static String userID;
+
+    /**
+     * Inflates the given menu
+     * @param menu {@link Menu} to inflate
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -33,6 +42,12 @@ public class AdminMainActivity extends AppCompatActivity {
 
         return true;
     }
+
+    /**
+     * Handle given menu item being selected
+     * @param item {@link MenuItem} that's been selected
+     * @return {@link Boolean} return value from calling the supers {@code onOptionsItemSelected()}
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -79,6 +94,11 @@ public class AdminMainActivity extends AppCompatActivity {
     {
         startActivity(new Intent(this, LoginActivity.class));// TODO: Might need to actually ask firebase to do this
     }
+
+    /**
+     * Sets up the view for this activity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +148,10 @@ public class AdminMainActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Calls the supers {@code onDestroy()}
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

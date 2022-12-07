@@ -34,6 +34,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * This Activity setups up a view to act as the "Admin account creation" screen
+ */
 public class Admin_Create extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static String ACTIVITY_NAME = "ADMINCREATE" ;
@@ -50,6 +53,10 @@ public class Admin_Create extends AppCompatActivity {
     protected static RecyclerViewAdapter_AddStudent courses_taught_adapter;
     protected RecyclerView CourseList;
 
+    /**
+     * Sets up the view for creating an admin account
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +108,11 @@ public class Admin_Create extends AppCompatActivity {
 
     }
 
+    /**
+     * Generates an email with the institution address domain if the instructor does not exist
+     * @param instructor_name {@link String} instructor name to check if exists
+     * @return {@link String} generated email
+     */
     public String generateEmail(String instructor_name )
     {
         String test_account = "Mr. Saleem Ibrahim";
@@ -120,6 +132,10 @@ public class Admin_Create extends AppCompatActivity {
 
     }
 
+    /**
+     * Populates {@code added_instructors} with instructors from the database if they are not already in
+     * {@code added_instructors} and they exist in the database
+     */
     public void PopulateInstructors()
     {
         db.collection("courses")
@@ -149,11 +165,22 @@ public class Admin_Create extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Helper method to easily print messages as a toast
+     * @param message {@link String} message to print
+     */
     public void PrintToast(String message )
     {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Creates a new account with the given parameters and a randomly generated random password
+     * @param email {@link String} email of new user
+     * @param first_name {@link String} first name of new user
+     * @param last_name {@link String} last name of new user
+     * @param name_in_db {@link String} name of new user that will be used in the db
+     */
     public void registerAdmin(String email, String first_name, String last_name, String name_in_db)
     {
         int rand = (int)(Math.random()*(90000-10000+1)+10000);
@@ -193,6 +220,11 @@ public class Admin_Create extends AppCompatActivity {
     });
     }
 
+    /**
+     * Retrieve the courses taught by the given instructors name and populate the {@code CourseList} with
+     * those courses
+     * @param instrucor_name {@link String} instructors name to filter courses by
+     */
     public void generateCoursesTaught(String instrucor_name)
     {
 
@@ -222,6 +254,10 @@ public class Admin_Create extends AppCompatActivity {
 
     }
 
+    /**
+     * Send a password reset email to the given email address
+     * @param email {@link String} email to send rest password email to
+     */
     public void SendPasswordResetEmail(String email)
     {
         mAuth.sendPasswordResetEmail(email)
@@ -236,6 +272,11 @@ public class Admin_Create extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Show an alert dialog that the account was created successfully and that a password rest email has been sent
+     * @param email {@link String} email belonging to the created account
+     * @param password unused
+     */
     public void notifyAccountCreated(String email, String password)
     {
 
@@ -251,6 +292,12 @@ public class Admin_Create extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Gathers all the courses that {@code instructor_name} is attached to and passes that to
+     * {@link Admin_Create#complete_update(ArrayList, String)}
+     * @param userID {@link String} instructors identifier
+     * @param instructor_name {@link String} instructors name
+     */
     public void update_course_table(String userID, String instructor_name)
     {
         ArrayList<String> documentpath = new ArrayList<String>();
@@ -278,6 +325,12 @@ public class Admin_Create extends AppCompatActivity {
 
 
     }
+
+    /**
+     * Updates the given course tables with the given instructors identifier
+     * @param docs {@link ArrayList} course table references
+     * @param instructor_id {@link String} instructor identifier
+     */
     public void complete_update(ArrayList<String> docs, String instructor_id) {
 
         for (int i = 0; i < docs.size(); i++) {

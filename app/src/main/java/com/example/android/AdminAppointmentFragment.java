@@ -384,6 +384,12 @@ public class AdminAppointmentFragment extends Fragment {
         dialog.show();
     }
 
+    /**
+     * Shows an {@link AlertDialog} to confirm the user wants to accept the appointment,
+     * and calls {@link AdminAppointmentFragment#updatedatabase(ArrayList, String)} if they
+     * click yes
+     * @param view
+     */
     public void AcceptAppointment(View view )
     {
         int positionitemToDelete = (int) view.getTag();
@@ -405,6 +411,11 @@ public class AdminAppointmentFragment extends Fragment {
         dialog.show();
     }
 
+    /**
+     * Changes the color field in the appointment table to green to signify an accepted appointment
+     * @param appointment {@link ArrayList} appointments to acceot
+     * @param userID {@link String} the user identifier of the appointment
+     */
     private void updatedatabase(ArrayList<String> appointment, String userID) {
 
         db.collection("appointment").document(appointment.get(0)).update("color","green")

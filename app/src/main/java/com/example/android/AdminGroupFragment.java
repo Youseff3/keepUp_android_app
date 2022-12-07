@@ -64,11 +64,6 @@ import java.util.Map;
  *
  * This fragment creates a view for displaying "Group" information
  */
-
-
-/**
- * Todo: Create a temp group and check for duplicates
- */
 public class AdminGroupFragment extends Fragment {
     protected static final String FRAGMENT_NAME="ADMINGroupFragment";
     protected static int colorIcon[] = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW};
@@ -390,7 +385,7 @@ public class AdminGroupFragment extends Fragment {
     }
 
     /**
-     * Calls supers {@code onPaus()} and dismisses dialog if it is open
+     * Calls supers {@code onPause()} and dismisses dialog if it is open
      */
     @Override
     public void onPause() {
@@ -460,7 +455,12 @@ public class AdminGroupFragment extends Fragment {
 
     }
 
-public void completeAdminDisplay(ArrayList<String> courses_taught)
+    /**
+     * Populates the {@link AdminGroupFragment#groups} array list with the groups that exist
+     * for the courses the admin teaches
+     * @param courses_taught {@link ArrayList} courses the admin teaches
+     */
+    public void completeAdminDisplay(ArrayList<String> courses_taught)
 {
     groups.clear();
 
@@ -781,7 +781,10 @@ public void completeAdminDisplay(ArrayList<String> courses_taught)
         snackbar.show();
     }
 
-
+    /**
+     * Helper method to print toast messages
+     * @param message {@link String} message to print
+     */
     private void PrintToast(String message)
     {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
